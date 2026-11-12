@@ -1,0 +1,22 @@
+[
+  {"text":"I need to finish my NLP assignment tomorrow.","actionable":true,"category":"study","due_date":"2026-11-13"},
+  {"text":"I feel tired today.","actionable":false},
+  {"text":"I should clean my room this weekend.","actionable":true,"category":"personal","due_date":null},
+  {"text":"I am worried about my internship.","actionable":false},
+  {"text":"Submit homework on 2026-11-16.","actionable":true,"category":"study","due_date":"2026-11-16"},
+  {"text":"Buy groceries today.","actionable":true,"category":"personal","due_date":"2026-11-12"},
+  {"text":"Book a medical appointment tomorrow.","actionable":true,"category":"health","due_date":"2026-11-13"},
+  {"text":"I already completed the report.","actionable":false},
+  {"text":"Prepare the client meeting on Friday.","actionable":true,"category":"work","due_date":"2026-11-13"},
+  {"text":"Read lecture notes next Monday.","actionable":true,"category":"study","due_date":"2026-11-16"},
+  {"text":"The weather is nice.","actionable":false},
+  {"text":"내일 과제를 제출해야 한다.","actionable":true,"category":"study","due_date":"2026-11-13"},
+  {"text":"오늘 기분이 좋다.","actionable":false},
+  {"text":"오늘 운동해야 한다.","actionable":true,"category":"health","due_date":"2026-11-12"},
+  {"text":"Send the report to my manager.","actionable":true,"category":"work","due_date":null},
+  {"text":"My exam is tomorrow.","actionable":false},
+  {"text":"Do not buy anything today.","actionable":false},
+  {"text":"Call the dentist tomorrow.","actionable":true,"category":"health","due_date":"2026-11-13"},
+  {"text":"I finished my homework yesterday.","actionable":false},
+  {"text":"Pay the electricity bill on 2026-11-15.","actionable":true,"category":"personal","due_date":"2026-11-15"}
+]

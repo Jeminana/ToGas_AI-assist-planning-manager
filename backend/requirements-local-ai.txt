@@ -1,0 +1,5 @@
+-r requirements.txt
+# Optional legacy OpenJevX runtime; not needed for mock mode or classroom API work.
+onnxruntime==1.31.1
+huggingface_hub==2.4.0
+tokenizers==0.23.3

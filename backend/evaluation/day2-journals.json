@@ -1,0 +1,24 @@
+[
+  {
+    "id": "english-mixed",
+    "reference_date": "2026-11-12",
+    "text": "Meet my friend tomorrow. Finish my NLP assignment on Friday. I feel tired. I already cleaned my room.",
+    "expected": [
+      {"source_text": "Meet my friend tomorrow.", "actionable": true, "category": "personal", "due_date": "2026-11-13"},
+      {"source_text": "Finish my NLP assignment on Friday.", "actionable": true, "category": "study", "due_date": "2026-11-13"},
+      {"source_text": "I feel tired.", "actionable": false},
+      {"source_text": "I already cleaned my room.", "actionable": false}
+    ]
+  },
+  {
+    "id": "korean-mixed",
+    "reference_date": "2026-11-12",
+    "text": "내일 NLP 과제를 제출해야 한다. 이번 주 금요일에 친구를 만나야 한다. 오늘은 피곤하다. 방 청소는 이미 끝냈다.",
+    "expected": [
+      {"source_text": "내일 NLP 과제를 제출해야 한다.", "actionable": true, "category": "study", "due_date": "2026-11-13"},
+      {"source_text": "이번 주 금요일에 친구를 만나야 한다.", "actionable": true, "category": "personal", "due_date": "2026-11-13"},
+      {"source_text": "오늘은 피곤하다.", "actionable": false},
+      {"source_text": "방 청소는 이미 끝냈다.", "actionable": false}
+    ]
+  }
+]
