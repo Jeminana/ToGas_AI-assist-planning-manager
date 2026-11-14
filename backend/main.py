@@ -2,18 +2,25 @@
 from datetime import datetime, timezone
 from pathlib import Path
 from threading import Lock
+import json
+import hashlib
+import hmac
+import secrets
+from uuid import uuid4
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from ai import analyze_result as analyze, ai_mode, segment, MAX_SEGMENTS
 from jev_api import JevError
-from schemas import AnalysisInput, ISODate, JournalCreate, PriorityInput, TaskInput, TaskPatch
+from schemas import AnalysisInput, ISODate, JournalCreate, PriorityInput, TaskInput, TaskPatch, AvailabilityInput, PlanInput, PlanConfirmation
 from scheduling import dashboard, local_today, recommend
+from planning import propose_plan, validate_manual_schedule, schedule_conflicts, time_windows, PROVISIONAL_MINUTES
 from storage import connection, initialize, search_rows
 
 DB = Path(__file__).with_name('togas.db')
 DB_LOCK = Lock()
+PLAN_SECRET = secrets.token_bytes(32)
 
 
 def connect():
@@ -77,7 +84,13 @@ def prioritize(body: PriorityInput):
 
 @app.get('/api/dashboard')
 def today_dashboard(today: ISODate | None = None):
-    return dashboard(tasks(), today or local_today())
+    reference = today or local_today()
+    with connect() as db:
+        rows = search_rows(db, 'tasks', 'title')
+        preference = read_preferences(db, reference)
+    result = dashboard(rows, reference)
+    result['schedule_conflicts'] = schedule_conflicts(rows, reference, time_windows(reference, preference['windows']) if preference['saved'] else None)
+    return result
 
 
 @app.get('/api/tasks')
@@ -89,10 +102,35 @@ def tasks(q: str = ''):
 @app.post('/api/tasks', status_code=201)
 def create_task(body: TaskInput):
     with DB_LOCK, connect() as db:
+        db.execute('BEGIN IMMEDIATE')
+        token = str(body.request_id) if body.request_id else None
+        fields = body.model_dump(mode='json', exclude={'request_id'})
+        fields['urgency_score'] = float(body.urgency_score)
+        payload = json.dumps(fields, sort_keys=True)
+        if token:
+            receipt = db.execute('SELECT task_id,payload FROM task_create_requests WHERE request_id=?', (token,)).fetchone()
+            if receipt:
+                # Receipts made before Day 3 omitted the new defaulted fields.
+                old = TaskInput.model_validate(json.loads(receipt['payload'])).model_dump(mode='json', exclude={'request_id'})
+                old['urgency_score'] = float(old['urgency_score'])
+                if json.dumps(old, sort_keys=True) != payload:
+                    raise HTTPException(409, 'This save request was already used for different task details.')
+                saved = db.execute('SELECT * FROM tasks WHERE id=?', (receipt['task_id'],)).fetchone()
+                if saved is None:
+                    raise HTTPException(409, 'This task was already saved and later deleted. Reload your workspace before adding it again.')
+                return dict(saved)
         if body.journal_id and not db.execute('SELECT 1 FROM journals WHERE id=?', (body.journal_id,)).fetchone():
             raise HTTPException(422, 'Source journal not found')
-        cur = db.execute('INSERT INTO tasks(title, category, urgency_score, due_date, journal_id, created_at) VALUES (?,?,?,?,?,?)',
-            (body.title, body.category, body.urgency_score, body.due_date.isoformat() if body.due_date else None, body.journal_id, utcnow()))
+        values = {**fields, 'created_at': utcnow()}
+        schedule_values(values)
+        try:
+            validate_manual_schedule(values, search_rows(db, 'tasks', 'title'))
+        except (ValueError, OverflowError) as exc:
+            raise HTTPException(409, str(exc)) from None
+        columns = ','.join(values)
+        cur = db.execute(f'INSERT INTO tasks({columns}) VALUES ({",".join("?" for _ in values)})', tuple(values.values()))
+        if token:
+            db.execute('INSERT INTO task_create_requests VALUES (?,?,?)', (token, cur.lastrowid, payload))
         return dict(db.execute('SELECT * FROM tasks WHERE id=?', (cur.lastrowid,)).fetchone())
 
 
@@ -101,12 +139,22 @@ def patch_task(task_id: int, body: TaskPatch):
     changes = body.model_dump(exclude_unset=True, mode='json')
     if not changes:
         raise HTTPException(400, 'No changes given')
-    if any(value is None for key, value in changes.items() if key != 'due_date'):
-        raise HTTPException(422, 'Null updates are only supported for clearing a deadline')
+    if any(value is None for key, value in changes.items() if key not in {'due_date', 'estimated_minutes', 'scheduled_start'}):
+        raise HTTPException(422, 'Only deadline, duration and scheduled start may be cleared')
     with DB_LOCK, connect() as db:
+        db.execute('BEGIN IMMEDIATE')
         current = db.execute('SELECT * FROM tasks WHERE id=?', (task_id,)).fetchone()
         if current is None:
             raise HTTPException(404, 'Task not found')
+        if any(key in changes and changes[key] != current[key] for key in ['scheduled_start', 'estimated_minutes']):
+            candidate = {**dict(current), **changes}
+            schedule_values(candidate)
+            for key in ['scheduled_minutes', 'scheduled_provisional', 'schedule_status']:
+                changes[key] = candidate[key]
+            try:
+                validate_manual_schedule(candidate, search_rows(db, 'tasks', 'title'))
+            except (ValueError, OverflowError) as exc:
+                raise HTTPException(409, str(exc)) from None
         if 'done' in changes:
             changes['done'] = int(changes['done'])
             changes['completed_at'] = (current['completed_at'] or utcnow()) if changes['done'] else None
@@ -145,3 +193,86 @@ def search(q: str = Query(default='', max_length=200)):
         return {'tasks': [], 'journals': []}
     with connect() as db:
         return {'tasks': search_rows(db, 'tasks', 'title', q), 'journals': search_rows(db, 'journals', 'content', q)}
+
+
+def schedule_values(values):
+    confirmed = bool(values.get('scheduled_start'))
+    values['schedule_status'] = 'confirmed' if confirmed else 'unscheduled'
+    values['scheduled_minutes'] = (values.get('estimated_minutes') or PROVISIONAL_MINUTES) if confirmed else None
+    values['scheduled_provisional'] = int(confirmed and values.get('estimated_minutes') is None)
+
+
+def read_preferences(db, reference):
+    row = db.execute('SELECT * FROM availability_preferences WHERE date=?', (reference.isoformat(),)).fetchone()
+    return {'date': reference.isoformat(), 'windows': json.loads(row['windows']) if row else [], 'max_tasks': row['max_tasks'] if row else 5, 'saved': row is not None}
+
+
+@app.get('/api/availability')
+def availability(date: ISODate):
+    with connect() as db:
+        return read_preferences(db, date)
+
+
+@app.put('/api/availability')
+def save_availability(body: AvailabilityInput):
+    with DB_LOCK, connect() as db:
+        db.execute('INSERT INTO availability_preferences VALUES (?,?,?) ON CONFLICT(date) DO UPDATE SET windows=excluded.windows,max_tasks=excluded.max_tasks',
+                   (body.date.isoformat(), json.dumps([window.model_dump() for window in body.windows]), body.max_tasks))
+        return read_preferences(db, body.date)
+
+
+def canonical(value):
+    return json.dumps(value, sort_keys=True, separators=(',', ':'), ensure_ascii=False)
+
+
+def workspace_snapshot(rows, preference):
+    return hashlib.sha256(canonical({'tasks': sorted(rows, key=lambda row: row['id']), 'availability': preference}).encode()).hexdigest()
+
+
+def plan_signature(plan):
+    return hmac.new(PLAN_SECRET, canonical(plan).encode(), hashlib.sha256).hexdigest()
+
+
+@app.post('/api/planning/propose')
+def generate_plan(body: PlanInput):
+    with connect() as db:
+        preference = read_preferences(db, body.date)
+        rows = search_rows(db, 'tasks', 'title')
+    if not preference['saved']:
+        raise HTTPException(422, 'Save availability for this date before generating a plan.')
+    if body.context and body.context.valid_for_date != body.date:
+        raise HTTPException(422, 'Context must apply to the selected date.')
+    plan = propose_plan(rows, body.date, preference['windows'], preference['max_tasks'], context=body.context)
+    plan.update(plan_id=str(uuid4()), snapshot=workspace_snapshot(rows, preference))
+    return {**plan, 'signature': plan_signature(plan)}
+
+
+@app.post('/api/planning/confirm')
+def confirm_plan(body: PlanConfirmation):
+    supplied = body.plan
+    encoded = canonical(supplied)
+    plan_id = supplied.get('plan_id')
+    if not isinstance(plan_id, str):
+        raise HTTPException(422, 'Missing plan id. Generate a new plan.')
+    with DB_LOCK, connect() as db:
+        db.execute('BEGIN IMMEDIATE')
+        receipt = db.execute('SELECT * FROM schedule_confirmations WHERE plan_id=?', (plan_id,)).fetchone()
+        if receipt:
+            if receipt['payload'] != encoded:
+                raise HTTPException(409, 'This plan id was already confirmed with different contents.')
+            return json.loads(receipt['result'])
+        unsigned = {key: value for key, value in supplied.items() if key != 'signature'}
+        signature = supplied.get('signature')
+        if not isinstance(signature, str) or not signature.isascii() or not hmac.compare_digest(signature, plan_signature(unsigned)):
+            raise HTTPException(409, 'Plan expired or changed. Generate a fresh plan before confirming.')
+        reference = datetime.fromisoformat(supplied['date']).date()
+        rows = search_rows(db, 'tasks', 'title')
+        preference = read_preferences(db, reference)
+        if supplied['snapshot'] != workspace_snapshot(rows, preference):
+            raise HTTPException(409, 'Tasks or availability changed. Generate a fresh plan before confirming.')
+        for placement in supplied['placements']:
+            db.execute("UPDATE tasks SET scheduled_start=?,scheduled_minutes=?,scheduled_provisional=?,schedule_status='confirmed' WHERE id=?",
+                       (placement['start'], placement['minutes'], int(placement['provisional']), placement['task_id']))
+        result = {'status': 'confirmed', 'task_ids': [row['task_id'] for row in supplied['placements']]}
+        db.execute('INSERT INTO schedule_confirmations VALUES (?,?,?)', (plan_id, encoded, canonical(result)))
+        return result

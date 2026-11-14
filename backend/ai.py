@@ -8,6 +8,7 @@ from functools import lru_cache
 import settings
 from jev_api import JevDecision
 from scheduling import due_date_from_text, local_today
+from segmentation import candidates, is_mock_action, segment
 
 MAX_SEGMENTS = 15
 
@@ -53,38 +54,19 @@ def get_model():
 def ai_mode():
     return os.environ.get('TOGAS_AI_MODE', 'mock').strip().lower()
 
-def segment(text: str) -> list[str]:
-    """Conservative splitting, keeping common abbreviations and decimal text intact."""
-    text = re.sub(r'(?m)^\s*(?:[-*•]|\d+[.)])\s+', '', text)
-    sentences = []
-    abbreviation = re.compile(r'\b(?:Mr|Mrs|Ms|Dr|Prof|Sr|Jr|vs|e\.g|i\.e|a\.m|p\.m)\.$|\b[A-Z]\.$', re.I)
-    for line in re.split(r'[;；]\s*|[\r\n]+', text):
-        parts = []
-        for part in re.split(r'(?<=[.!?。！？])\s+|(?<=[。！？])(?=\S)', line):
-            if parts and abbreviation.search(parts[-1]):
-                parts[-1] += ' ' + part
-            else:
-                parts.append(part)
-        for part in parts:
-            sentences.extend(re.split(r'\band\s+(?=I\s+(?:need|have|must|should|will|plan|want|intend)\b)', part, flags=re.I))
-    return [part.strip(' -\t\r') for part in sentences if part.strip(' -\t\r')]
-
-
 class MockDecision:
     """Transparent rule-based stand-in for UI development, never a Jev evaluation."""
     def __init__(self, reference):
         self.reference = reference
 
     def decide(self, text, questions):
-        action = bool(re.search(r'\b(need to|have to|must|should|plan to|will|remember to|finish|submit|study|read|write|buy|clean|call|send|prepare|exercise|book|schedule|review|complete|pay|meet|visit|attend|practice|renew|pick up)\b|해야|공부|제출|청소|운동|예약', text, re.I))
-        if re.search(r"\b(already|yesterday|finished|completed|don't need|do not need|no need)\b|완료했|끝냈", text, re.I):
-            action = False
+        action = is_mock_action(text)
         category = 'other'
         for name, pattern in {
             'study': r'exam|homework|assignment|nlp|study|lecture|notes|시험|과제|공부',
             'work': r'work|meeting|client|internship|report|업무|회의',
             'health': r'exercise|doctor|medical|walk|gym|운동|병원',
-            'personal': r'clean|buy|grocer|room|pay|laundry|friend|청소|구매|친구',
+            'personal': r'clean|buy|grocer|room|pay|laundry|friend|cook|청소|구매|친구|요리',
         }.items():
             if re.search(pattern, text, re.I):
                 category = name
@@ -129,7 +111,8 @@ def analyze_result(text: str, reference=None) -> dict:
     else:
         raise RuntimeError('Analysis is disabled or the provider is not configured')
     proposals = []
-    sentences = segment(text)[:MAX_SEGMENTS]
+    selected = candidates(text)[:MAX_SEGMENTS]
+    sentences = [candidate.text for candidate in selected]
     metadata = {'model': None, 'usage': None, 'request_count': 0, 'cached': False}
     if mode == 'jev':
         batch = model.decide_many(sentences, QUESTIONS, reference)
@@ -137,7 +120,8 @@ def analyze_result(text: str, reference=None) -> dict:
         metadata = {key: batch[key] for key in metadata}
     else:
         decisions = [model.decide(sentence, QUESTIONS) for sentence in sentences]
-    for sentence, decision in zip(sentences, decisions):
+    for candidate, decision in zip(selected, decisions):
+        sentence = candidate.text
         answers = decision['answers']
         action = answers["actionable"]
         probability = number(action["noul"], 0, 1)
@@ -147,7 +131,7 @@ def analyze_result(text: str, reference=None) -> dict:
         urg = answers["urgency"]
         cat_conf = confidence(cat.get('confidence'))
         urg_conf = confidence(urg.get('confidence'))
-        reasons = []
+        reasons = list(candidate.review_reasons)
         if mode == 'mock':
             reasons.append('This is a rule-based demo suggestion, not a Jev prediction.')
         if mode != 'mock' and probability < 0.8:
@@ -169,7 +153,7 @@ def analyze_result(text: str, reference=None) -> dict:
             reasons.append('The task title was shortened; check it against the original text.')
         proposals.append({
             "title": sentence[:250],
-            "source_text": sentence,
+            "source_text": candidate.source_text,
             "category": category,
             "urgency_score": round(urgency, 3),
             "due_date": due_date_from_text(sentence, reference),

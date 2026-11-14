@@ -452,6 +452,241 @@ test('production UI with real SQLite persistence and mocked AI', {timeout: 90000
       assert.equal(tasks.find(task => task.title === 'Doctor appointment').category, 'health');
       assert.deepEqual(pageErrors, []);
     });
+    await t.test('manual retry after a committed but lost response saves once, including after workspace refresh', async () => {
+      await page.getByRole('button', {name: 'Tasks', exact: true}).click();
+      await page.getByRole('button', {name: 'Add task', exact: true}).click();
+      await page.getByRole('textbox', {name: 'New task title'}).fill('Day 3 retry-safe manual task');
+      const before = (await (await fetch(`${api}/tasks`)).json()).length;
+      let token, committedId;
+      const loseResponse = async route => {
+        if (route.request().method() !== 'POST') return route.continue();
+        token = route.request().postDataJSON().request_id;
+        assert.ok(token);
+        committedId = (await (await route.fetch()).json()).id;
+        await route.abort('failed');
+      };
+      await page.route('**/api/tasks', loseResponse);
+      await page.getByRole('button', {name: 'Add', exact: true}).click();
+      await page.getByRole('alert').waitFor();
+      assert.equal((await (await fetch(`${api}/tasks`)).json()).length, before + 1);
+      await page.unroute('**/api/tasks', loseResponse);
+      await page.getByRole('button', {name: 'Reload workspace', exact: true}).click();
+      const row = page.locator('.task').filter({hasText: 'Day 3 retry-safe manual task'});
+      await row.waitFor();
+      const retry = page.waitForRequest(request => request.method() === 'POST' && request.url().endsWith('/api/tasks'));
+      await page.getByRole('button', {name: 'Add', exact: true}).click();
+      assert.equal((await retry).postDataJSON().request_id, token);
+      await page.getByRole('form', {name: 'New task', exact: true}).waitFor({state: 'detached'});
+      assert.equal(await row.count(), 1);
+      const tasks = await (await fetch(`${api}/tasks`)).json();
+      assert.equal(tasks.length, before + 1);
+      assert.equal(tasks.find(task => task.title === 'Day 3 retry-safe manual task').id, committedId);
+    });
+
+    await t.test('approval retry after a lost response preserves edits and creates one linked task', async () => {
+      await page.getByRole('button', {name: 'Journal', exact: true}).click();
+      await page.getByRole('button', {name: 'New entry', exact: true}).click();
+      await page.locator('textarea').fill('Read Day 3 notes tomorrow.');
+      await page.getByRole('button', {name: 'Preview suggestions'}).click();
+      await page.getByRole('heading', {name: 'Review suggestions'}).waitFor();
+      const input = page.getByRole('textbox', {name: 'Task title', exact: true});
+      await input.fill('Edited Day 3 study task');
+      await page.getByLabel('Urgency').selectOption('0');
+      const before = (await (await fetch(`${api}/tasks`)).json()).length;
+      const loseResponse = async route => {
+        if (route.request().method() !== 'POST') return route.continue();
+        await route.fetch();
+        await route.abort('failed');
+      };
+      await page.route('**/api/tasks', loseResponse);
+      await page.getByRole('button', {name: 'Approve', exact: true}).click();
+      await page.getByRole('alert').waitFor();
+      assert.equal(await input.inputValue(), 'Edited Day 3 study task');
+      await page.unroute('**/api/tasks', loseResponse);
+      await page.getByRole('button', {name: 'Approve', exact: true}).click();
+      await page.getByText('All suggestions reviewed.', {exact: false}).waitFor();
+      const tasks = await (await fetch(`${api}/tasks`)).json();
+      assert.equal(tasks.length, before + 1);
+      const saved = tasks.find(task => task.title === 'Edited Day 3 study task');
+      assert.equal(saved.urgency_score, 0);
+      assert.ok(saved.journal_id);
+      assert.ok(saved.due_date);
+      assert.deepEqual(pageErrors, []);
+    });
+
+    await t.test('stabilized extraction handles cooking and action lists while keeping original text and explicit review', async () => {
+      await page.getByRole('button', {name: 'Journal', exact: true}).click();
+      await page.getByRole('button', {name: 'New entry', exact: true}).click();
+      await page.locator('textarea').fill('meet friend. cook for tonight.');
+      const before = (await (await fetch(`${api}/tasks`)).json()).length;
+      await page.getByRole('button', {name: 'Preview suggestions'}).click();
+      await page.getByRole('heading', {name: 'Review suggestions'}).waitFor();
+      assert.deepEqual(await page.getByRole('textbox', {name: 'Task title', exact: true}).evaluateAll(inputs => inputs.map(input => input.value)), ['meet friend.', 'cook for tonight.']);
+      assert.equal((await (await fetch(`${api}/tasks`)).json()).length, before);
+      while (await page.getByRole('button', {name: 'Reject', exact: true}).count()) await page.getByRole('button', {name: 'Reject', exact: true}).first().click();
+      await page.getByRole('button', {name: 'Back to journal', exact: true}).click();
+      await page.getByRole('button', {name: 'New entry', exact: true}).click();
+      const text = 'Study Python, cook dinner, and call my mother.';
+      await page.locator('textarea').fill(text);
+      await page.getByRole('button', {name: 'Preview suggestions'}).click();
+      await page.getByRole('heading', {name: 'Review suggestions'}).waitFor();
+      const titles = page.getByRole('textbox', {name: 'Task title', exact: true});
+      assert.deepEqual(await titles.evaluateAll(inputs => inputs.map(input => input.value)), ['Study Python', 'cook dinner', 'call my mother.']);
+      assert.equal(await page.locator('.source-text').count(), 3);
+      assert.equal(await page.locator('.source-text p').evaluateAll(nodes => nodes.every(node => node.textContent === 'Study Python, cook dinner, and call my mother.')), true);
+      assert.match(await page.locator('.review-reasons').first().innerText(), /Multiple actions/);
+      await titles.first().fill('Study Python chapter 2');
+      await page.getByRole('button', {name: 'Approve', exact: true}).first().click();
+      await titles.nth(1).waitFor({state: 'visible'});
+      while (await page.getByRole('button', {name: 'Reject', exact: true}).count()) await page.getByRole('button', {name: 'Reject', exact: true}).first().click();
+      await page.getByText('All suggestions reviewed.', {exact: false}).waitFor();
+      const tasks = await (await fetch(`${api}/tasks`)).json();
+      assert.equal(tasks.length, before + 1);
+      assert.ok(tasks.find(task => task.title === 'Study Python chapter 2').journal_id);
+      assert.ok((await (await fetch(`${api}/journals`)).json()).some(entry => entry.content === text));
+      assert.deepEqual(pageErrors, []);
+    });
+
+    let planningPage, planningFirst, planningSecond;
+    await t.test('Day 3 metadata editing, persistent multiple windows and rejection work', async () => {
+      planningFirst = await (await fetch(`${api}/tasks`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({title: 'Day3 first scheduled task', urgency_score: 3, importance: 5, estimated_minutes: 45})})).json();
+      planningSecond = await (await fetch(`${api}/tasks`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({title: 'Day3 second provisional task', urgency_score: 3, importance: 4})})).json();
+      planningPage = await context.newPage();
+      planningPage.setDefaultTimeout(10000);
+      planningPage.on('pageerror', error => pageErrors.push(error.message));
+      await planningPage.clock.install({time: new Date('2031-02-10T00:00:00Z')});
+      await planningPage.goto(site);
+      const planner = planningPage.getByRole('region', {name: 'Day planner'});
+      await planner.getByLabel('Available start 1').fill('09:00');
+      await planner.getByLabel('Available end 1').fill('10:00');
+      await planner.getByRole('button', {name: 'Add time window', exact: true}).click();
+      await planner.getByLabel('Available end 2').fill('14:00');
+      await planner.getByLabel('Maximum tasks per day').fill('2');
+      const failAvailability = route => route.fulfill({status: 503, json: {detail: 'Simulated availability failure'}});
+      await planningPage.route('**/api/availability', failAvailability);
+      await planner.getByRole('button', {name: 'Save availability', exact: true}).click();
+      await planner.getByText('Simulated availability failure', {exact: false}).waitFor();
+      assert.equal(await planner.getByLabel('Available end 2').inputValue(), '14:00');
+      await planningPage.unroute('**/api/availability', failAvailability);
+      await planner.getByRole('button', {name: 'Save availability', exact: true}).click();
+      await planner.getByText('Availability saved.', {exact: true}).waitFor();
+      const saved = await (await fetch(`${api}/availability?date=2031-02-10`)).json();
+      assert.equal(saved.windows.length, 2);
+      assert.equal(saved.max_tasks, 2);
+      await planner.getByRole('button', {name: 'Generate plan', exact: true}).click();
+      await planner.getByRole('heading', {name: 'Proposed schedule', exact: true}).waitFor();
+      assert.equal(await planner.locator('.placement').count(), 2);
+      await planner.getByText('13:00–13:30 · 30 min (provisional estimate)', {exact: true}).waitFor();
+      assert.equal((await (await fetch(`${api}/tasks`)).json()).find(task => task.id === planningFirst.id).scheduled_start, null);
+      await planner.getByRole('button', {name: 'Reject plan', exact: true}).click();
+      await planner.getByText('Plan rejected. Task times are unchanged.', {exact: true}).waitFor();
+      assert.equal((await (await fetch(`${api}/tasks`)).json()).find(task => task.id === planningFirst.id).scheduled_start, null);
+    });
+
+    await t.test('Day 3 confirmation recovers from a lost committed response and Today stays chronological', async () => {
+      const planner = planningPage.getByRole('region', {name: 'Day planner'});
+      await planner.getByRole('button', {name: 'Generate plan', exact: true}).click();
+      await planner.getByRole('button', {name: 'Confirm plan', exact: true}).waitFor();
+      let postedPlan;
+      const loseConfirmation = async route => {
+        postedPlan = route.request().postDataJSON().plan;
+        const response = await route.fetch();
+        assert.equal(response.status(), 200);
+        await route.abort('failed');
+      };
+      await planningPage.route('**/api/planning/confirm', loseConfirmation);
+      await planner.getByRole('button', {name: 'Confirm plan', exact: true}).click();
+      await planner.getByRole('alert').waitFor();
+      await planningPage.unroute('**/api/planning/confirm', loseConfirmation);
+      const retry = planningPage.waitForRequest(request => request.url().endsWith('/planning/confirm'));
+      await planner.getByRole('button', {name: 'Confirm plan', exact: true}).click();
+      assert.equal((await retry).postDataJSON().plan.plan_id, postedPlan.plan_id);
+      await planner.getByText('Schedule confirmed.', {exact: true}).waitFor();
+      await planningPage.getByRole('heading', {name: 'Confirmed schedule', exact: true}).waitFor();
+      const rows = planningPage.locator('.task').filter({hasText: /Day3 (first scheduled|second provisional) task/});
+      assert.deepEqual(await rows.locator('.task-content span').allTextContents(), ['Day3 first scheduled task', 'Day3 second provisional task']);
+      assert.match(await rows.nth(1).innerText(), /30 min \(provisional\)/);
+      const tasks = await (await fetch(`${api}/tasks`)).json();
+      assert.equal(tasks.find(task => task.id === planningSecond.id).estimated_minutes, null);
+      await planningPage.reload();
+      await planningPage.getByRole('heading', {name: 'Confirmed schedule', exact: true}).waitFor();
+      assert.equal(await planningPage.getByLabel('Available end 2').inputValue(), '14:00');
+    });
+
+    await t.test('Day 3 scheduled edits preserve times, reject overlaps and support Focus completion', async () => {
+      const row = planningPage.locator('.task').filter({hasText: 'Day3 first scheduled task'});
+      await row.getByRole('button', {name: 'Edit', exact: true}).click();
+      const form = planningPage.getByRole('form', {name: 'Edit Day3 first scheduled task', exact: true});
+      await form.getByText('Planning details', {exact: true}).click();
+      await form.getByLabel('Estimated minutes (optional)', {exact: true}).fill('270');
+      await form.getByRole('button', {name: 'Save changes', exact: true}).click();
+      await planningPage.getByRole('alert').filter({hasText: 'overlaps a confirmed task'}).waitFor();
+      assert.equal(await form.getByLabel('Estimated minutes (optional)', {exact: true}).inputValue(), '270');
+      await form.getByLabel('Estimated minutes (optional)', {exact: true}).fill('50');
+      await form.getByLabel('Importance (1–5)', {exact: true}).fill('4');
+      await form.getByLabel('Effort (1–5)', {exact: true}).fill('2');
+      await form.getByRole('button', {name: 'Save changes', exact: true}).click();
+      await row.waitFor();
+      let saved = (await (await fetch(`${api}/tasks`)).json()).find(task => task.id === planningFirst.id);
+      assert.equal(saved.scheduled_start, '2031-02-10T09:00:00');
+      assert.equal(saved.estimated_minutes, 50);
+      assert.equal(saved.effort_level, 2);
+      await planningPage.getByRole('button', {name: 'Search', exact: true}).click();
+      await planningPage.getByRole('searchbox', {name: 'Search tasks and journals'}).fill('Day3 first scheduled task');
+      await planningPage.getByRole('heading', {name: 'Tasks (1)', exact: true}).waitFor();
+      await planningPage.getByRole('button', {name: 'Start focusing', exact: true}).click();
+      await planningPage.getByRole('button', {name: 'Mark as done', exact: true}).click();
+      await planningPage.getByRole('heading', {name: "Let's get things done.", exact: true}).waitFor();
+      saved = (await (await fetch(`${api}/tasks`)).json()).find(task => task.id === planningFirst.id);
+      assert.equal(saved.done, 1);
+      assert.equal(saved.scheduled_start, '2031-02-10T09:00:00');
+      for (const width of [320, 390, 1280]) {
+        await planningPage.setViewportSize({width, height: 900});
+        assert.equal(await planningPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+        if (width === 390) await planningPage.screenshot({path: join(frontend, 'test-results', 'day3-planner-mobile.png'), fullPage: true});
+      }
+      await planningPage.screenshot({path: join(frontend, 'test-results', 'day3-planner.png'), fullPage: true});
+      assert.deepEqual(pageErrors, []);
+      await planningPage.close();
+    });
+
+    await t.test('Day 3 stale confirmation explains the conflict and supports regeneration', async () => {
+      const third = await (await fetch(`${api}/tasks`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({title: 'Day3 stale candidate', urgency_score: 3, importance: 5, estimated_minutes: 15})})).json();
+      await fetch(`${api}/availability`, {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({date: '2031-02-10', windows: [{start: '09:00', end: '10:00'}, {start: '13:00', end: '14:00'}], max_tasks: 3})});
+      const stalePage = await context.newPage();
+      stalePage.setDefaultTimeout(10000);
+      stalePage.on('pageerror', error => pageErrors.push(error.message));
+      try {
+        await stalePage.clock.install({time: new Date('2031-02-10T00:00:00Z')});
+        await stalePage.goto(site);
+        const planner = stalePage.getByRole('region', {name: 'Day planner'});
+        await planner.getByRole('button', {name: 'Generate plan', exact: true}).click();
+        await planner.getByRole('button', {name: 'Confirm plan', exact: true}).waitFor();
+        await fetch(`${api}/tasks/${third.id}`, {method: 'PATCH', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({title: 'Day3 changed candidate'})});
+        await planner.getByRole('button', {name: 'Confirm plan', exact: true}).click();
+        await planner.getByRole('alert').filter({hasText: 'Tasks or availability changed'}).waitFor();
+        assert.equal((await (await fetch(`${api}/tasks`)).json()).find(task => task.id === third.id).scheduled_start, null);
+        await planner.getByRole('button', {name: 'Generate plan', exact: true}).click();
+        await planner.locator('.placement').getByText('Day3 changed candidate', {exact: true}).waitFor();
+        await planner.getByRole('button', {name: 'Confirm plan', exact: true}).click();
+        await planner.getByText('Schedule confirmed.', {exact: true}).waitFor();
+        assert.equal((await (await fetch(`${api}/tasks`)).json()).find(task => task.id === third.id).scheduled_start, '2031-02-10T13:30:00');
+        assert.deepEqual(pageErrors, []);
+      } finally {await stalePage.close();}
+    });
+
+    await t.test('Today uses Seoul dates when the browser is in another timezone', async () => {
+      const travelling = await browser.newContext({timezoneId: 'America/Los_Angeles'});
+      try {
+        const otherPage = await travelling.newPage();
+        await otherPage.clock.install({time: new Date('2026-11-14T15:05:00Z')});
+        const dashboardResponse = otherPage.waitForResponse(response => response.url().includes('/api/dashboard?today=2026-11-15'));
+        await otherPage.goto(site);
+        await otherPage.getByText('2026-11-15', {exact: true}).waitFor();
+        const response = await dashboardResponse;
+        assert.equal((await response.json()).date, '2026-11-15');
+      } finally { await travelling.close(); }
+    });
   } finally {
     await browser?.close();
     await Promise.all([stop(preview), stop(backend)]);

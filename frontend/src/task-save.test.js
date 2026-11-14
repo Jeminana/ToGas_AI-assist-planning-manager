@@ -29,9 +29,39 @@ test('successful save preserves urgency zero and publishes the returned task', a
   assert.equal(calls.length, 1); // No refresh request after a committed save.
   assert.equal(calls[0].path, '/tasks');
   assert.equal(calls[0].options.method, 'POST');
-  assert.deepEqual(JSON.parse(calls[0].options.body), {
+  const {request_id, ...payload} = JSON.parse(calls[0].options.body);
+  assert.match(request_id, /^[0-9a-f-]{36}$/);
+  assert.deepEqual(payload, {
     title: 'Study NLP', category: 'other', urgency_score: 0,
   });
+});
+
+test('lost responses reuse a token; successful independent saves use fresh tokens', async () => {
+  const tokens = [];
+  const task = {title: 'Retry safely', urgency_score: 0, due_date: null};
+  const {save} = harness(async (path, options) => {
+    tokens.push(JSON.parse(options.body).request_id);
+    if (tokens.length === 1) throw new TypeError('Response lost after commit');
+    return {id: 8, ...task};
+  });
+  assert.equal(await save(task), false);
+  assert.equal(await save({...task}), true);
+  assert.equal(tokens[0], tokens[1]);
+  assert.equal(await save({...task}), true);
+  assert.notEqual(tokens[1], tokens[2]);
+});
+
+test('separate suggestions with identical text retain separate retry tokens', async () => {
+  const tokens = [];
+  const {save} = harness(async (path, options) => {
+    tokens.push(JSON.parse(options.body).request_id);
+    throw new Error('Offline');
+  });
+  await save({_id: 'first', title: 'Read'});
+  await save({_id: 'second', title: 'Read'});
+  await save({_id: 'first', title: 'Read'});
+  assert.notEqual(tokens[0], tokens[1]);
+  assert.equal(tokens[0], tokens[2]);
 });
 
 test('missing metadata receives defaults', async () => {
@@ -42,6 +72,18 @@ test('missing metadata receives defaults', async () => {
     return {id: 1, ...task};
   });
   assert.equal(await save({title: 'Buy milk'}), true);
+});
+
+test('planning metadata is preserved, including an explicitly unknown duration', async () => {
+  const {save} = harness(async (path, options) => {
+    const task = JSON.parse(options.body);
+    assert.equal(task.importance, 5);
+    assert.equal(task.effort_level, 1);
+    assert.equal(task.estimated_minutes, null);
+    assert.equal(task.scheduled_start, '2026-11-14T09:00');
+    return {id: 10, ...task};
+  });
+  assert.equal(await save({title: 'Planning task', importance: 5, effort_level: 1, estimated_minutes: null, scheduled_start: '2026-11-14T09:00'}), true);
 });
 
 test('approved task keeps its deadline and source journal', async () => {

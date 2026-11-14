@@ -3,12 +3,12 @@
   "is_jev_evaluation": false,
   "requested_examples": 20,
   "reference_date": "2026-11-12",
-  "created_at": "2026-11-12T06:23:40.883430+00:00",
+  "created_at": "2026-11-14T03:33:30.696966+00:00",
   "metrics": {
     "examples": 20,
     "errors": 0,
-    "actionability_accuracy": 0.95,
-    "actionability_precision": 0.9230769230769231,
+    "actionability_accuracy": 1.0,
+    "actionability_precision": 1.0,
     "actionability_recall": 1.0,
     "category_accuracy_on_actionable_examples": 0.9166666666666666,
     "deadline_accuracy_on_actionable_examples": 1.0
@@ -307,21 +307,7 @@
         "text": "Do not buy anything today.",
         "actionable": false
       },
-      "predicted": {
-        "title": "Do not buy anything today.",
-        "source_text": "Do not buy anything today.",
-        "category": "personal",
-        "urgency_score": 3.0,
-        "due_date": "2026-11-12",
-        "action_probability": 0.6,
-        "category_confidence": 0.5,
-        "urgency_confidence": 0.5,
-        "needs_review": true,
-        "review_reasons": [
-          "This is a rule-based demo suggestion, not a Jev prediction."
-        ],
-        "title_truncated": false
-      },
+      "predicted": null,
       "error": null
     },
     {

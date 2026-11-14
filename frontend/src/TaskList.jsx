@@ -6,7 +6,8 @@ function TaskRow({task, pending, onPatch, onRemove}) {
   const [draft, setDraft] = useState(task);
   if (editing) return <form className="card stack" aria-label={`Edit ${task.title}`} onSubmit={async event => {
     event.preventDefault();
-    if (await onPatch(task, {title: draft.title, category: draft.category, urgency_score: draft.urgency_score, due_date: draft.due_date || null})) setEditing(false);
+    if (await onPatch(task, {title: draft.title, category: draft.category, urgency_score: draft.urgency_score, due_date: draft.due_date || null,
+      importance: draft.importance ?? 3, estimated_minutes: draft.estimated_minutes ?? null, effort_level: draft.effort_level ?? 3, scheduled_start: draft.scheduled_start || null})) setEditing(false);
   }}>
     <TaskFields value={draft} onChange={setDraft} disabled={pending} titleLabel="Edit task title" />
     <div className="buttons"><button disabled={pending || !draft.title.trim()}>{pending ? 'Saving...' : 'Save changes'}</button><button type="button" className="secondary" disabled={pending} onClick={() => setEditing(false)}>Cancel</button></div>

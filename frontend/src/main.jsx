@@ -8,6 +8,7 @@ import TaskList from './TaskList.jsx';
 import Journal from './Journal.jsx';
 import Review from './Review.jsx';
 import Search from './Search.jsx';
+import Planner from './Planner.jsx';
 
 function App() {
   const [tab, setTab] = useState('Today');
@@ -45,7 +46,7 @@ function App() {
 
   const [addTask] = useState(() => createTaskSaver({
     request: req, onPendingChange: setSaving, onError: setError,
-    onSaved: saved => setTasks(current => sortTasks([...current, saved])),
+    onSaved: saved => setTasks(current => sortTasks([...current.filter(task => task.id !== saved.id), saved])),
   }));
 
   useEffect(() => {
@@ -197,9 +198,16 @@ function App() {
               <h3>{recommendation.task.title}</h3><p>{recommendation.explanation}</p><button onClick={() => startFocus(recommendation.task)}>Start focusing</button>
             </> : <p>All caught up!</p>}</div>
             <h2>Today's tasks</h2><p className="hint">Overdue and undated tasks, tasks due today, and tasks completed today.</p>
-            <TaskList tasks={dashboard.tasks} {...listProps} emptyText="Nothing scheduled for today." />
+            {dashboard.scheduled_tasks?.length > 0 && <><h3>Confirmed schedule</h3><TaskList tasks={dashboard.scheduled_tasks} {...listProps} /></>}
+            <h3>Without a start today</h3>
+            <TaskList tasks={dashboard.tasks.filter(task => !(dashboard.scheduled_tasks || []).some(scheduled => scheduled.id === task.id))} {...listProps} emptyText="Nothing waiting for a starting time today." />
+            {(dashboard.overdue_tasks?.length > 0 || dashboard.schedule_conflicts?.length > 0) && <section className="notice" aria-label="Planning conflicts"><h3>Overdue and scheduling conflicts</h3>
+              {dashboard.overdue_tasks?.map(task => <p key={task.id}>{task.title}: overdue since {task.due_date}.</p>)}
+              {dashboard.schedule_conflicts?.map((conflict, index) => <p key={index}>{conflict.task_ids.map(id => tasks.find(task => task.id === id)?.title || `Task ${id}`).join(', ')}: {conflict.reason}</p>)}
+            </section>}
           </>}
           <div className="buttons wrap"><button className="secondary" onClick={() => setTab('Journal')}>Brain Dump</button><button className="secondary" onClick={() => setTab('Tasks')}>Manage tasks</button></div>
+          <Planner today={today} tasks={tasks} onChanged={async () => {setTasks(await req('/tasks')); setDashboardVersion(version => version + 1);}} />
         </>}
         {tab === 'Journal' && <Journal editorRef={journalEditor} text={journal} onChange={text => {setJournal(text); setJournalStatus('');}} onNew={newJournal} canStartNew={!journal.trim() || savedJournal.current?.content === journal} onSave={() => journalAction()} onAnalyze={() => journalAction(true)} busy={journalBusy} savingTask={saving} status={journalStatus} journals={journals} onOpen={openJournal} provider={provider} />}
         {tab === 'Review' && <Review proposals={proposals} setProposals={setProposals} saving={saving} warnings={warnings} provider={analysisProvider} info={analysisInfo} onJournal={() => {const entry = journals.find(entry => entry.id === analysisJournalId); if (entry) openJournal(entry);}} onTasks={() => setTab('Tasks')} onApprove={proposal => addTask({...proposal, journal_id: analysisJournalId}, () => setProposals(current => current.filter(item => item._id !== proposal._id)))} />}

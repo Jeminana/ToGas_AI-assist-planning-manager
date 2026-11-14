@@ -16,10 +16,7 @@ export async function req(path, options = {}) {
   return response.status === 204 ? null : response.json();
 }
 
-export function localDate() {
-  const now = new Date();
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-}
+export {localDate} from './date.js';
 
 export function sortTasks(tasks) {
   return [...tasks].sort((a, b) => a.done - b.done || b.urgency_score - a.urgency_score || b.id - a.id);

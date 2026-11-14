@@ -35,15 +35,16 @@ For the exact verified Python dependency versions, add `-c backend/constraints.t
 - **Today:** view overdue, undated and due-today tasks, today's completed tasks, progress, and an explained next-task recommendation.
 - **Journal:** save without analysis, reopen history, or preview suggestions. Open entry scrolls to and focuses the editor. Repeated analysis reuses the saved entry; save retries also reuse it when a response was lost after the server committed. Editing an entry saves a new version; history remains unchanged.
 - **Review:** edit titles, categories, urgency and deadlines; inspect the original sentence and specific review reasons; approve or reject suggestions. Pending suggestions remain accessible while navigating. Failed saves preserve the edited input. Empty analysis explains that the journal is safe, and Back to journal returns to its editor.
-- **Tasks:** the list is shown first; tap **+** beside All Tasks to open the new-task form. Close hides the form and keeps the draft; a successful save clears and closes it. Failed saves leave the form open for retry. Existing tasks support editing, complete/reopen and deletion. Pending submissions are guarded against repeated clicks; successful saves use the returned server record.
+- **Tasks:** the list is shown first; tap **+** beside All Tasks to open the new-task form. Close hides the form and keeps the draft; a successful save clears and closes it. Failed saves leave the form open for retry. Existing tasks support editing, complete/reopen and deletion. Manual saves and approvals reuse a UUID when retrying unchanged details after a lost response. A successful retry uses the existing server record, including after Reload workspace.
 - **Search:** literal, case-insensitive keyword search across task titles and journal content, including Korean text.
 - **Focus:** work on one task, mark it complete, and return to Today. A failed completion keeps the task open for retry.
+- **Planning:** open Today → Plan your day, save one or more availability windows and a daily task limit, then Generate plan. Review proposed times and unplaced reasons before Confirm plan or Reject plan. Confirmed tasks appear chronologically with duration/provisional labels. Expand Planning details when adding, editing or approving a task to set importance (1–5), duration, effort (1–5), or an optional manual confirmed start. Unknown duration stays unknown; planning uses a labeled 30-minute fallback. Stale proposals require regeneration. See [the Day 3 report](docs/DAY3_REPORT.md).
 
 ## AI modes and the Jev connection
 
 `TOGAS_AI_MODE` defaults to `mock`. The UI labels this as demo mode, hides simulated confidence values, and requires review. Normal development makes no Jev calls and downloads no model files.
 
-Demo detection does not require the word “need”: examples include “Finish my NLP project,” “Meet my friend,” “Visit the doctor,” and “Attend the lecture.” It still uses a limited action-word list and can miss other natural phrasing. Use live mode for deliberate Jev tests.
+Demo detection supports explicit intention grammar, including unseen verbs, and a limited imperative list including “cook.” Safe action lists such as “Buy milk and clean my room” split into reviewable candidates; “Buy bread and butter” stays together. Split candidates preserve the full original sentence and explain shared-object/deadline uncertainty. Bare unfamiliar imperatives and Korean compound clauses remain limitations. Routine development and testing make no live Jev calls.
 
 Environment settings are shown in `.env.example`. The backend automatically loads the project-root `.env` without overriding explicit shell environment settings. Keep credentials out of chat, source files, screenshots, and Git; `.env` is ignored.
 
@@ -69,15 +70,15 @@ The legacy local OpenJevX path remains optional and **unverified with real weigh
 ## Dates, recommendations and validation
 
 - Date recognition supports ISO `YYYY-MM-DD`, today/tomorrow/day after tomorrow, weekdays, and their implemented Korean equivalents. Bare weekdays use the next occurrence including today; “next Friday” means Friday of the following calendar week. The browser supplies the reference date. Vague dates such as “this weekend” stay unset for user review.
-- Jump Start considers only incomplete tasks: overdue → due today → due tomorrow → undated → later deadlines. Within each group, higher urgency wins, then earlier deadline and older task ID. It is deterministic and makes no model calls.
-- Today includes active overdue/undated/due-today tasks and tasks completed on that day. Completion-day grouping uses Asia/Seoul; future tasks remain in All Tasks and can still be recommended if no earlier task is available.
+- Jump Start considers only incomplete tasks: overdue → due today → due tomorrow → remaining tasks. Within each group, higher urgency wins, then higher importance, earlier deadline (undated last on a tie), and older task ID. Effort does not affect priority. It is deterministic and makes no model calls.
+- Today includes active overdue/undated/due-today tasks, tasks with a confirmed start today even if their deadline is later, and tasks completed on that day. The browser's Today date, journal-analysis reference date and completion-day grouping all use Asia/Seoul, including when the browser uses another timezone. Other future tasks remain in All Tasks and remain eligible for recommendations under the priority rules above.
 - Titles are trimmed and limited to 1–250 characters. Journal content must be nonblank and at most 10,000 characters; original formatting is preserved.
 - Categories are study/work/personal/health/other. Urgency must be a finite JSON number from 0–3; completion requires a JSON boolean. Unknown fields, invalid dates and null task updates are rejected; `due_date: null` explicitly clears a deadline.
 - Invalid inputs return readable 422 responses. Empty task updates return 400, missing task IDs return 404, and unavailable analysis returns 503. Rejected updates do not change stored records.
 
 ## Tests and evaluation
 
-Latest verification: 51 backend tests, fifteen Chrome workflow scenarios, dependency checks, and the production build passed. Automated hosted tests use mocked HTTP responses; the separate recorded smoke test made exactly one live request. Day 2's additional work made no live calls.
+Latest verification (Day 3): 93 backend tests, 11 JavaScript tests, twenty-three Chrome workflow scenarios, dependency checks, and the production build passed. Automated hosted tests use mocked HTTP responses; the separate recorded smoke test made exactly one live request. Subsequent development made no additional live calls. [Day 3 report](docs/DAY3_REPORT.md) records implementation, schema, interfaces, tests and limits.
 
 From the root:
 
@@ -102,20 +103,21 @@ Screenshots are generated in `frontend/test-results/` (ignored by Git). The 20-e
 
 Live evaluation is opt-in: for example, `python backend/evaluate.py --mode jev --limit 1` using the project virtual environment. An explicit `--limit` is required to cap calls. It stops on the first upstream/configuration failure, without retries. No live evaluation beyond the single smoke test has been run.
 
-Day 2 also has two mixed journals in `backend/evaluation/day2-journals.json`: one English and one Korean, with eight labeled segments total (intentions, feelings and completed actions). Run `python backend/evaluate_journals.py --mode mock` for an offline pipeline check. The prepared live command is `python backend/evaluate_journals.py --mode jev --max-requests 2`; it sends at most two requests, uses only these synthetic examples, and stops after an error. This live command has **not** been run. The saved `day2-mock-results.json` does not measure Jev quality; the mock rules miss one Korean intention in this small set.
+Day 2 also has two mixed journals in `backend/evaluation/day2-journals.json`: one English and one Korean, with eight labeled segments total (intentions, feelings and completed actions). Run `python backend/evaluate_journals.py --mode mock` for an offline pipeline check. The prepared live command is `python backend/evaluate_journals.py --mode jev --max-requests 2`; it sends at most two requests, uses only these synthetic examples, and stops after an error. This live command has **not** been run. The refreshed `day2-mock-results.json` matches all eight actionability labels after stabilization; this does not measure Jev quality.
 
 See [the verification checkpoint](docs/STATUS.md) for tested scope and remaining work.
 
 ## Storage and architecture
 
-SQLite data lives in `backend/togas.db` (ignored by Git). Startup adds deadline, completion-time, source-journal and journal-save request columns when missing without deleting existing records. Connections are committed/rolled back and closed explicitly. Journal creation accepts an optional UUID `request_id`: retries with the same id and text return the same entry, while different text with the same id returns 409. The UI reuses that id across retries within the current session; New entry starts a fresh save. Existing completed tasks without a historical timestamp remain in All Tasks but cannot be counted as completed on a known day. Back up an important database before upgrading.
+SQLite data lives in `backend/togas.db` (ignored by Git). Startup adds deadline, completion-time, source-journal and journal-save request columns and a task-creation receipt table when missing without deleting existing records. Connections are committed/rolled back and closed explicitly. Journal creation accepts an optional UUID `request_id`: retries with the same id and text return the same entry, while different text with the same id returns 409. The UI reuses that id across retries within the current session; New entry starts a fresh save. Task creation also accepts an optional UUID: equivalent details return the existing task without undoing later edits or completion. Different details or a previously deleted task return 409. Task receipts survive server restarts and deletion, preventing delayed retries from recreating deleted tasks. Existing completed tasks without a historical timestamp remain in All Tasks but cannot be counted as completed on a known day. Back up an important database before upgrading.
 
 ```text
 backend/
   main.py                 HTTP endpoints and orchestration
   schemas.py              Shared input validation
   storage.py              SQLite lifetime, migration, keyword search
-  ai.py                   Decision adapters, segmentation, normalization
+  ai.py                   Decision adapters and normalization
+  segmentation.py         Pure candidate splitting and conservative demo rules
   jev_api.py              Official hosted adapter, batching and bounded cache
   settings.py             Private .env loading; explicit shell settings win
   scheduling.py           Explicit dates, Today and recommendation rules
@@ -127,12 +129,12 @@ frontend/src/
   api.js / task-save.js    Requests and guarded task creation
 ```
 
-Implemented endpoints: health, dashboard, task CRUD, journal save/list, search, `/api/ai/analyze` (also `/api/ai/extract`), and deterministic `/api/ai/prioritize`.
+Implemented endpoints: health, dashboard, task CRUD, journal save/list, search, `/api/ai/analyze` (also `/api/ai/extract`), deterministic `/api/ai/prioritize`, availability GET/PUT, and `/api/planning/propose` / `/api/planning/confirm`. Day 3 startup adds task metadata plus availability and confirmation-receipt tables without deleting existing data. Schedules use explicit Seoul local times; proposals do not write task times. Confirmed starts remain fixed, and overlapping manual changes return 409.
 
 ## Limitations
 
-Local demo only: no authentication, cloud sync or deployment security. Segmentation preserves common titles/abbreviations, decimals and URLs, and splits explicit first-person action clauses. Unusual abbreviations, shared-object conjunctions, negation and vague deadlines can still be misinterpreted. The first 15 segments are processed per analysis; longer input gets a visible warning. Invalid actionability probabilities fail safely; invalid categories/urgency/confidence fall back to reviewable values with an explanation. Long suggested titles are shortened with the original sentence available for comparison. Mock rules are intentionally simple and make mistakes, including some negation and category cases.
+Local demo only: no authentication, cloud sync or deployment security. Segmentation preserves common titles/abbreviations, decimals and URLs, and splits recognizable action clauses. Unusual abbreviations, ambiguous coordination, shared objects and deadlines can still be misinterpreted. Korean compound clauses remain intact and flagged. Conservative negation/completion guards can suppress a whole mixed sentence; unknown bare imperatives may be missed. The first 15 candidates are processed per analysis; longer input gets a visible warning. Invalid actionability probabilities fail safely; invalid categories/urgency/confidence fall back to reviewable values with an explanation. Long suggested titles are shortened with the original sentence available for comparison. Mock rules remain simple and imperfect; their results do not measure Jev quality.
 
-User drafts are retained while navigating within the app, but unsaved drafts and journal retry ids are not persisted across browser reloads. Saving a journal before analysis protects it from model failures. Journal retries within the session are protected against duplicate saves after lost responses; task-creation failures after a server commit can still leave an uncertain result, so inspect Tasks before retrying in that case.
+User drafts are retained while navigating within the app, but unsaved drafts and journal/task retry ids are not persisted across browser reloads. Saving a journal before analysis protects it from model failures. Journal and task retries within the session are protected against duplicate saves after lost responses. Changed task details use a new save request; after an uncertain failure, retry unchanged details first or inspect Tasks before editing and saving again. Reload workspace preserves current draft/retry state; a full browser reload does not.
 
 The referenced `Jev_Tutorial(1).ipynb` was not present in the supplied workspace. No XP, timers, monetization, social features or analytics have been added.

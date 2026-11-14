@@ -1,7 +1,7 @@
 {
   "mode": "mock",
   "is_jev_evaluation": false,
-  "created_at": "2026-11-12T06:23:40.515395+00:00",
+  "created_at": "2026-11-14T03:33:31.057842+00:00",
   "live_request_limit": 0,
   "automatic_retries": false,
   "requested_cases": 2,
@@ -93,6 +93,21 @@
               "This is a rule-based demo suggestion, not a Jev prediction."
             ],
             "title_truncated": false
+          },
+          {
+            "title": "이번 주 금요일에 친구를 만나야 한다.",
+            "source_text": "이번 주 금요일에 친구를 만나야 한다.",
+            "category": "personal",
+            "urgency_score": 2.0,
+            "due_date": "2026-11-13",
+            "action_probability": 0.6,
+            "category_confidence": 0.5,
+            "urgency_confidence": 0.5,
+            "needs_review": true,
+            "review_reasons": [
+              "This is a rule-based demo suggestion, not a Jev prediction."
+            ],
+            "title_truncated": false
           }
         ],
         "provider": "mock",
@@ -110,9 +125,9 @@
         },
         {
           "source_text": "이번 주 금요일에 친구를 만나야 한다.",
-          "actionability_matches": false,
-          "category_matches": false,
-          "deadline_matches": false
+          "actionability_matches": true,
+          "category_matches": true,
+          "deadline_matches": true
         },
         {
           "source_text": "오늘은 피곤하다.",

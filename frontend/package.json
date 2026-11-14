@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
-    "test": "node --test src/task-save.test.js",
+    "test": "node --test src/*.test.js",
     "pretest:browser": "npm run build",
     "test:browser": "node --test tests/browser.test.js"
   },
