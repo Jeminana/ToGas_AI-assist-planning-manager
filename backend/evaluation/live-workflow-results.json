@@ -1,0 +1,99 @@
+{
+  "created_at": "2026-11-16T04:13:23.488Z",
+  "status": "passed",
+  "steps": [
+    "Synthetic journal saved independently",
+    "Real uncached Jev result displayed; no task created before approval",
+    "Edited proposal explicitly approved and linked to saved journal",
+    "Availability saved; priority placement proposed and schedule confirmed",
+    "Focus completion and dashboard count persisted after browser reload"
+  ],
+  "analysis_submissions": 1,
+  "analysis": {
+    "proposals": [
+      {
+        "title": "I need to read my study notes today.",
+        "source_text": "I need to read my study notes today.",
+        "action_span": "I need to read my study notes today.",
+        "category": "study",
+        "urgency_score": 2.39,
+        "due_date": "2026-11-16",
+        "action_probability": 0.99,
+        "category_confidence": 1,
+        "urgency_confidence": 0.4,
+        "needs_review": true,
+        "review_reasons": [
+          "Several action words lack a clear clause boundary. Add any missing task manually.",
+          "The suggested urgency is uncertain."
+        ],
+        "title_truncated": false
+      }
+    ],
+    "provider": "jev",
+    "model": "jev-1.14.0",
+    "usage": {
+      "input_tokens": 585,
+      "output_tokens": 92
+    },
+    "request_count": 1,
+    "cached": false,
+    "analysis_latency_ms": 353.412,
+    "warnings": [],
+    "segments_processed": 1,
+    "segments_total": 1
+  },
+  "approved": {
+    "id": 1,
+    "title": "Live workflow study task",
+    "done": 0,
+    "category": "study",
+    "urgency_score": 3,
+    "created_at": "2026-11-16T04:13:22.557990+00:00",
+    "due_date": "2026-11-16",
+    "completed_at": null,
+    "journal_id": 1,
+    "importance": 5,
+    "estimated_minutes": 20,
+    "effort_level": 3,
+    "scheduled_start": null,
+    "scheduled_minutes": null,
+    "scheduled_provisional": 0,
+    "schedule_status": "unscheduled"
+  },
+  "completed": {
+    "id": 1,
+    "title": "Live workflow study task",
+    "done": 1,
+    "category": "study",
+    "urgency_score": 3,
+    "created_at": "2026-11-16T04:13:22.557990+00:00",
+    "due_date": "2026-11-16",
+    "completed_at": "2026-11-16T04:13:23.193399+00:00",
+    "journal_id": 1,
+    "importance": 5,
+    "estimated_minutes": 20,
+    "effort_level": 3,
+    "scheduled_start": "2026-11-16T00:00:00",
+    "scheduled_minutes": 20,
+    "scheduled_provisional": 0,
+    "schedule_status": "confirmed"
+  },
+  "page_errors": [],
+  "database": "isolated temporary SQLite",
+  "screenshots": "D:\\hy-edu-2026\\ToGas_AI-assist-planning-manager\\frontend\\test-results\\live-workflow",
+  "session_accounting": {
+    "total_live_requests": 2,
+    "input_tokens": 1170,
+    "output_tokens": 184,
+    "first_attempt": {
+      "status": "automation_selector_failure_after_successful_analysis",
+      "model": "jev-1.14.0",
+      "usage": {
+        "input_tokens": 585,
+        "output_tokens": 92
+      },
+      "analysis_latency_ms": 494.796,
+      "error": "Urgency exact label selector did not match; corrected to existing suite selector before rerun."
+    }
+  }
+}

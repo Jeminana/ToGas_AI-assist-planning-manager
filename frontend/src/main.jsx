@@ -28,6 +28,9 @@ function App() {
   const [provider, setProvider] = useState('mock');
   const [analysisProvider, setAnalysisProvider] = useState('mock');
   const [analysisInfo, setAnalysisInfo] = useState({total: 0, cached: false});
+  const [manualDraft, setManualDraft] = useState({...blankTask});
+  const [addingManual, setAddingManual] = useState(false);
+  const [taskFilter, setTaskFilter] = useState('all');
   const [error, setError] = useState('');
   const [draft, setDraft] = useState({...blankTask});
   const [showTaskForm, setShowTaskForm] = useState(false);
@@ -140,7 +143,7 @@ function App() {
         setAnalysisJournalId(saved.id);
         setWarnings(result.warnings || []);
         setAnalysisProvider(result.provider || provider);
-        setAnalysisInfo({total: result.proposals.length, cached: !!result.cached});
+        setAnalysisInfo({total: result.proposals.length, cached: !!result.cached, model: result.model, usage: result.usage, latency: result.analysis_latency_ms});
         setJournalStatus('Journal saved. Suggestions ready.');
         setTab('Review');
       }
@@ -210,13 +213,19 @@ function App() {
           <Planner today={today} tasks={tasks} onChanged={async () => {setTasks(await req('/tasks')); setDashboardVersion(version => version + 1);}} />
         </>}
         {tab === 'Journal' && <Journal editorRef={journalEditor} text={journal} onChange={text => {setJournal(text); setJournalStatus('');}} onNew={newJournal} canStartNew={!journal.trim() || savedJournal.current?.content === journal} onSave={() => journalAction()} onAnalyze={() => journalAction(true)} busy={journalBusy} savingTask={saving} status={journalStatus} journals={journals} onOpen={openJournal} provider={provider} />}
-        {tab === 'Review' && <Review proposals={proposals} setProposals={setProposals} saving={saving} warnings={warnings} provider={analysisProvider} info={analysisInfo} onJournal={() => {const entry = journals.find(entry => entry.id === analysisJournalId); if (entry) openJournal(entry);}} onTasks={() => setTab('Tasks')} onApprove={proposal => addTask({...proposal, journal_id: analysisJournalId}, () => setProposals(current => current.filter(item => item._id !== proposal._id)))} />}
+        {tab === 'Review' && <Review proposals={proposals} setProposals={setProposals} saving={saving} warnings={warnings} provider={analysisProvider} info={analysisInfo}
+          manualDraft={manualDraft} setManualDraft={next => setManualDraft({...next, journal_id: next.journal_id ?? analysisJournalId})} addingManual={addingManual} setAddingManual={setAddingManual}
+          onManualAdd={() => addTask({...manualDraft, journal_id: manualDraft.journal_id ?? analysisJournalId, _id: `manual-review-${manualDraft.journal_id ?? analysisJournalId}`}, () => {setManualDraft({...blankTask}); setAddingManual(false);})}
+          onJournal={() => {const entry = journals.find(entry => entry.id === analysisJournalId); if (entry) openJournal(entry);}} onTasks={() => setTab('Tasks')} onApprove={proposal => addTask({...proposal, journal_id: analysisJournalId}, () => setProposals(current => current.filter(item => item._id !== proposal._id)))} />}
         {tab === 'Tasks' && <>
           <div className="section-heading"><h1>All Tasks</h1><button ref={addTaskButton} className="add-task-button" aria-label={showTaskForm ? 'Hide new task form' : 'Add task'} aria-expanded={showTaskForm} aria-controls="new-task-form" disabled={saving} onClick={() => showTaskForm ? closeTaskForm() : setShowTaskForm(true)}><span aria-hidden="true">{showTaskForm ? '−' : '+'}</span></button></div>
           {showTaskForm && <form id="new-task-form" ref={taskForm} aria-label="New task" className="card stack" onSubmit={event => {event.preventDefault(); if (draft.title.trim()) addTask(draft, () => {setDraft({...blankTask}); closeTaskForm();});}}>
             <TaskFields value={draft} onChange={setDraft} disabled={saving} titleLabel="New task title" /><div className="buttons"><button disabled={saving || !draft.title.trim()}>{saving ? 'Saving...' : 'Add'}</button><button type="button" className="secondary" disabled={saving} onClick={closeTaskForm}>Close</button></div>
           </form>}
-          <TaskList tasks={tasks} {...listProps} emptyText="No tasks yet. Tap + to add your first task." />
+          <label>Task filter<select value={taskFilter} onChange={event => setTaskFilter(event.target.value)}>
+            {['all', 'active', 'completed', 'scheduled', 'unscheduled'].map(value => <option key={value} value={value}>{value[0].toUpperCase() + value.slice(1)}</option>)}
+          </select></label>
+          <TaskList tasks={tasks.filter(task => taskFilter === 'all' || taskFilter === 'active' && !task.done || taskFilter === 'completed' && task.done || taskFilter === 'scheduled' && !task.done && task.scheduled_start || taskFilter === 'unscheduled' && !task.done && !task.scheduled_start)} {...listProps} emptyText={taskFilter === 'all' ? 'No tasks yet. Tap + to add your first task.' : 'No tasks match this filter.'} />
         </>}
         {tab === 'Search' && <Search onFocus={startFocus} onOpenJournal={openJournal} />}
         {tab === 'Focus' && <>

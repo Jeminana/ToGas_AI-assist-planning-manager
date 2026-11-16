@@ -9,7 +9,7 @@ export default function Journal({editorRef, text, onChange, onSave, onAnalyze, o
     {provider === 'jev' && <p className="notice">Live Jev mode: organizing sends this entry for analysis. Identical analyses are reused for 30 minutes to save shared API usage.</p>}
     <label className="sr-only" htmlFor="journal-text">Journal entry</label>
     <textarea ref={editorRef} id="journal-text" value={text} disabled={busy} maxLength={10000} onChange={event => onChange(event.target.value)} placeholder="I need to finish my NLP assignment tomorrow. I feel tired today." />
-    <div className="buttons wrap"><button className="secondary" disabled={busy || !text.trim()} onClick={onSave}>Save journal</button><button disabled={busy || savingTask || !text.trim()} onClick={onAnalyze}>{busy ? 'Working...' : provider === 'mock' ? 'Preview suggestions' : 'Organize with Jev'}</button></div>
+    <div className="buttons wrap"><button className="secondary" disabled={busy || !text.trim()} onClick={onSave}>Save journal</button><button disabled={busy || savingTask || !text.trim()} onClick={onAnalyze}>{busy ? 'Working...' : provider === 'mock' ? 'Preview suggestions' : provider === 'local' ? 'Analyze locally' : provider === 'jev' ? 'Organize with Jev' : 'Analyze entry'}</button></div>
     {status && <p role="status">{status}</p>}
     <h2>Journal history</h2>
     {journals.length ? journals.map(entry => <article className="card journal-entry" key={entry.id}>

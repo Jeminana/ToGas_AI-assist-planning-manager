@@ -1,16 +1,18 @@
 {
   "mode": "mock",
   "is_jev_evaluation": false,
+  "is_local_model_evaluation": false,
   "requested_examples": 20,
+  "live_request_limit": 0,
   "reference_date": "2026-11-12",
-  "created_at": "2026-11-14T03:33:30.696966+00:00",
+  "created_at": "2026-11-14T04:30:01.461712+00:00",
   "metrics": {
     "examples": 20,
     "errors": 0,
     "actionability_accuracy": 1.0,
     "actionability_precision": 1.0,
     "actionability_recall": 1.0,
-    "category_accuracy_on_actionable_examples": 0.9166666666666666,
+    "category_accuracy_on_actionable_examples": 1.0,
     "deadline_accuracy_on_actionable_examples": 1.0
   },
   "results": [
@@ -24,6 +26,7 @@
       "predicted": {
         "title": "I need to finish my NLP assignment tomorrow.",
         "source_text": "I need to finish my NLP assignment tomorrow.",
+        "action_span": "I need to finish my NLP assignment tomorrow.",
         "category": "study",
         "urgency_score": 2.0,
         "due_date": "2026-11-13",
@@ -56,6 +59,7 @@
       "predicted": {
         "title": "I should clean my room this weekend.",
         "source_text": "I should clean my room this weekend.",
+        "action_span": "I should clean my room this weekend.",
         "category": "personal",
         "urgency_score": 1.0,
         "due_date": null,
@@ -88,6 +92,7 @@
       "predicted": {
         "title": "Submit homework on 2026-11-16.",
         "source_text": "Submit homework on 2026-11-16.",
+        "action_span": "Submit homework on 2026-11-16.",
         "category": "study",
         "urgency_score": 2.0,
         "due_date": "2026-11-16",
@@ -112,6 +117,7 @@
       "predicted": {
         "title": "Buy groceries today.",
         "source_text": "Buy groceries today.",
+        "action_span": "Buy groceries today.",
         "category": "personal",
         "urgency_score": 3.0,
         "due_date": "2026-11-12",
@@ -136,6 +142,7 @@
       "predicted": {
         "title": "Book a medical appointment tomorrow.",
         "source_text": "Book a medical appointment tomorrow.",
+        "action_span": "Book a medical appointment tomorrow.",
         "category": "health",
         "urgency_score": 2.0,
         "due_date": "2026-11-13",
@@ -168,6 +175,7 @@
       "predicted": {
         "title": "Prepare the client meeting on Friday.",
         "source_text": "Prepare the client meeting on Friday.",
+        "action_span": "Prepare the client meeting on Friday.",
         "category": "work",
         "urgency_score": 2.0,
         "due_date": "2026-11-13",
@@ -192,6 +200,7 @@
       "predicted": {
         "title": "Read lecture notes next Monday.",
         "source_text": "Read lecture notes next Monday.",
+        "action_span": "Read lecture notes next Monday.",
         "category": "study",
         "urgency_score": 2.0,
         "due_date": "2026-11-16",
@@ -224,6 +233,7 @@
       "predicted": {
         "title": "내일 과제를 제출해야 한다.",
         "source_text": "내일 과제를 제출해야 한다.",
+        "action_span": "내일 과제를 제출해야 한다.",
         "category": "study",
         "urgency_score": 2.0,
         "due_date": "2026-11-13",
@@ -256,6 +266,7 @@
       "predicted": {
         "title": "오늘 운동해야 한다.",
         "source_text": "오늘 운동해야 한다.",
+        "action_span": "오늘 운동해야 한다.",
         "category": "health",
         "urgency_score": 3.0,
         "due_date": "2026-11-12",
@@ -280,6 +291,7 @@
       "predicted": {
         "title": "Send the report to my manager.",
         "source_text": "Send the report to my manager.",
+        "action_span": "Send the report to my manager.",
         "category": "work",
         "urgency_score": 1.0,
         "due_date": null,
@@ -320,7 +332,8 @@
       "predicted": {
         "title": "Call the dentist tomorrow.",
         "source_text": "Call the dentist tomorrow.",
-        "category": "other",
+        "action_span": "Call the dentist tomorrow.",
+        "category": "health",
         "urgency_score": 2.0,
         "due_date": "2026-11-13",
         "action_probability": 0.6,
@@ -352,6 +365,7 @@
       "predicted": {
         "title": "Pay the electricity bill on 2026-11-15.",
         "source_text": "Pay the electricity bill on 2026-11-15.",
+        "action_span": "Pay the electricity bill on 2026-11-15.",
         "category": "personal",
         "urgency_score": 2.0,
         "due_date": "2026-11-15",

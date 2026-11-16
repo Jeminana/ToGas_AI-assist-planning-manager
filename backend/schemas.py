@@ -124,6 +124,7 @@ class PlanningContext(RequestInput):
 class PlanInput(RequestInput):
     date: ISODate
     context: PlanningContext | None = None
+    plan_from_now: StrictBool = False
 
 
 class PlanConfirmation(RequestInput):

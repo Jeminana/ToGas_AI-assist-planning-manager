@@ -368,7 +368,10 @@ test('production UI with real SQLite persistence and mocked AI', {timeout: 90000
         await livePage.locator('textarea').fill('Meet my friend tomorrow.');
         await livePage.getByRole('button', {name: 'Organize with Jev', exact: true}).click();
         await livePage.getByRole('heading', {name: 'Review suggestions'}).waitFor();
+        assert.equal(await livePage.getByLabel('Urgency').inputValue(), '1.88');
+        assert.equal(await livePage.getByLabel('Urgency').locator('option:checked').innerText(), 'Suggested: 1.88 / 3');
         await livePage.getByText('Reused a recent Jev analysis. No new API request was made.').waitFor();
+        await livePage.getByText('Prediction details', {exact: true}).click();
         await livePage.getByText('urgency confidence: 48%', {exact: false}).waitFor();
         await livePage.getByText('Needs review — uncertain prediction', {exact: true}).waitFor();
         assert.equal(intercepted, 1);
@@ -376,6 +379,7 @@ test('production UI with real SQLite persistence and mocked AI', {timeout: 90000
         await livePage.getByRole('button', {name: 'Approve', exact: true}).click();
         await livePage.getByRole('textbox', {name: 'Task title', exact: true}).waitFor({state: 'detached'});
         assert.equal((await (await fetch(`${api}/tasks`)).json()).length, before + 1);
+        assert.equal((await (await fetch(`${api}/tasks`)).json()).find(task => task.title === 'Meet my friend tomorrow.').urgency_score, 1.88);
         assert.deepEqual(pageErrors, []);
       } finally { await livePage.close(); }
     });
@@ -673,6 +677,138 @@ test('production UI with real SQLite persistence and mocked AI', {timeout: 90000
         assert.equal((await (await fetch(`${api}/tasks`)).json()).find(task => task.id === third.id).scheduled_start, '2031-02-10T13:30:00');
         assert.deepEqual(pageErrors, []);
       } finally {await stalePage.close();}
+    });
+
+    await t.test('Day 4 review shows missing confidence honestly and retries a manual missing task safely', async () => {
+      const reviewPage = await context.newPage();
+      reviewPage.setDefaultTimeout(10000);
+      reviewPage.on('pageerror', error => pageErrors.push(error.message));
+      await reviewPage.route('**/api/health', route => route.fulfill({json: {status: 'ok', ai_mode: 'jev'}}));
+      await reviewPage.route('**/api/ai/analyze', route => route.fulfill({json: {
+        provider: 'jev', model: 'jev-day4-test-fixture', usage: {input_tokens: 123, output_tokens: 45}, analysis_latency_ms: 9.2,
+        cached: false, request_count: 1, warnings: [], proposals: [{title: 'Day4 fixture candidate', action_probability: 0.64,
+          category: 'other', urgency_score: 1, category_confidence: null, urgency_confidence: null,
+          source_text: 'A synthetic fixture journal.', needs_review: true, review_reasons: ['The suggested category is uncertain.']}],
+      }}));
+      try {
+        await reviewPage.goto(site);
+        await reviewPage.getByRole('button', {name: 'Journal', exact: true}).click();
+        await reviewPage.locator('textarea').fill('A synthetic fixture journal.');
+        await reviewPage.getByRole('button', {name: 'Organize with Jev', exact: true}).click();
+        await reviewPage.getByRole('heading', {name: 'Review suggestions', exact: true}).waitFor();
+        await reviewPage.getByText('Extracted 1 task suggestion.', {exact: true}).waitFor();
+        await reviewPage.getByText('Prediction details', {exact: true}).click();
+        await reviewPage.getByText('category confidence: not provided', {exact: false}).waitFor();
+        assert.doesNotMatch(await reviewPage.locator('main').innerText(), /NaN%|0%/);
+        await reviewPage.getByText('Analysis details', {exact: true}).click();
+        await reviewPage.getByText('Model: jev-day4-test-fixture', {exact: false}).waitFor();
+        await reviewPage.getByRole('button', {name: 'Add a missing task', exact: true}).click();
+        const form = reviewPage.getByRole('form', {name: 'Missing task', exact: true});
+        await form.getByRole('textbox', {name: 'Missing task title', exact: true}).fill('Day4 missed manual task');
+        await form.getByLabel('Category').selectOption('work');
+        const before = (await (await fetch(`${api}/tasks`)).json()).length;
+        const loseResponse = async route => {
+          if (route.request().method() !== 'POST') return route.continue();
+          await route.fetch(); await route.abort('failed');
+        };
+        await reviewPage.route('**/api/tasks', loseResponse);
+        await form.getByRole('button', {name: 'Approve manual task', exact: true}).click();
+        await reviewPage.getByRole('alert').waitFor();
+        assert.equal(await form.getByRole('textbox', {name: 'Missing task title', exact: true}).inputValue(), 'Day4 missed manual task');
+        await reviewPage.unroute('**/api/tasks', loseResponse);
+        await form.getByRole('button', {name: 'Approve manual task', exact: true}).click();
+        await form.waitFor({state: 'detached'});
+        const tasks = await (await fetch(`${api}/tasks`)).json();
+        assert.equal(tasks.length, before + 1);
+        const saved = tasks.find(task => task.title === 'Day4 missed manual task');
+        assert.ok(saved.journal_id);
+        assert.equal(saved.category, 'work');
+        await reviewPage.getByRole('button', {name: 'Reject', exact: true}).click();
+        await reviewPage.getByRole('button', {name: 'Go to Tasks', exact: true}).click();
+        await reviewPage.getByLabel('Task filter').selectOption('completed');
+        assert.equal(await reviewPage.locator('.task').filter({hasText: saved.title}).count(), 0);
+        assert.equal(await reviewPage.locator('.task input[type=checkbox]').evaluateAll(nodes => nodes.every(node => node.checked)), true);
+        await reviewPage.getByLabel('Task filter').selectOption('unscheduled');
+        await reviewPage.locator('.task').getByText(saved.title, {exact: true}).waitFor();
+        await reviewPage.getByLabel('Task filter').selectOption('scheduled');
+        assert.equal(await reviewPage.locator('.task').filter({hasText: saved.title}).count(), 0);
+        await reviewPage.getByLabel('Task filter').selectOption('all');
+        for (const width of [320, 390, 1280]) {
+          await reviewPage.setViewportSize({width, height: 900});
+          assert.equal(await reviewPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+        }
+        assert.deepEqual(pageErrors, []);
+      } finally {await reviewPage.close();}
+    });
+
+    await t.test('Day 4 journal to review, priority, confirmed schedule and Focus completion works end to end', async () => {
+      // Complete earlier synthetic fixtures in this temporary database so the
+      // next-task recommendation for this scenario is unambiguous.
+      for (const task of await (await fetch(`${api}/tasks`)).json()) {
+        if (!task.done) await fetch(`${api}/tasks/${task.id}`, {method: 'PATCH', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({done: true})});
+      }
+      // Isolate this real-date flow from the Day 3 scenarios' fixed clocks.
+      const flowContext = await browser.newContext({timezoneId: 'Asia/Seoul'});
+      const flowPage = await flowContext.newPage();
+      flowPage.setDefaultTimeout(10000);
+      flowPage.on('pageerror', error => pageErrors.push(error.message));
+      try {
+        await flowPage.goto(site);
+        await flowPage.getByRole('button', {name: 'Journal', exact: true}).click();
+        const text = 'I need to read Day4 notes today.';
+        await flowPage.locator('textarea').fill(text);
+        const before = (await (await fetch(`${api}/tasks`)).json()).length;
+        await flowPage.getByRole('button', {name: 'Preview suggestions', exact: true}).click();
+        await flowPage.getByRole('heading', {name: 'Review suggestions', exact: true}).waitFor();
+        await flowPage.getByText('Demo results', {exact: false}).waitFor();
+        assert.equal((await (await fetch(`${api}/tasks`)).json()).length, before);
+        await flowPage.getByRole('textbox', {name: 'Task title', exact: true}).fill('Day4 end-to-end study task');
+        await flowPage.getByLabel('Urgency').selectOption('3');
+        await flowPage.getByText('Planning details', {exact: true}).click();
+        await flowPage.getByLabel('Importance (1–5)', {exact: true}).fill('5');
+        await flowPage.getByLabel('Estimated minutes (optional)', {exact: true}).fill('20');
+        await flowPage.getByRole('button', {name: 'Approve', exact: true}).click();
+        await flowPage.getByText('All suggestions reviewed.', {exact: false}).waitFor();
+        const approved = (await (await fetch(`${api}/tasks`)).json()).find(task => task.title === 'Day4 end-to-end study task');
+        assert.ok(approved.journal_id);
+        assert.ok((await (await fetch(`${api}/journals`)).json()).find(entry => entry.id === approved.journal_id && entry.content === text));
+        const priority = await (await fetch(`${api}/ai/prioritize`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({reference_date: approved.due_date})})).json();
+        assert.equal(priority.recommendation.task.id, approved.id);
+        await flowPage.getByRole('button', {name: 'Today', exact: true}).click();
+        const planner = flowPage.getByRole('region', {name: 'Day planner'});
+        await planner.getByLabel('Available start 1', {exact: true}).waitFor();
+        while (await planner.getByRole('button', {name: /Remove window/}).count()) await planner.getByRole('button', {name: /Remove window/}).first().click();
+        await planner.getByLabel('Available start 1', {exact: true}).fill('00:00');
+        await planner.getByLabel('Available end 1', {exact: true}).fill('23:59');
+        await planner.getByLabel('Maximum tasks per day', {exact: true}).fill('5');
+        await planner.getByRole('button', {name: 'Save availability', exact: true}).click();
+        await planner.getByText('Availability saved.', {exact: true}).waitFor();
+        await planner.getByRole('button', {name: 'Generate plan', exact: true}).click();
+        await planner.locator('.placement').getByText(approved.title, {exact: true}).waitFor();
+        await planner.getByText('Why this task?', {exact: true}).click();
+        await planner.getByRole('button', {name: 'Confirm plan', exact: true}).click();
+        await planner.getByText('Schedule confirmed.', {exact: true}).waitFor();
+        await flowPage.getByRole('heading', {name: 'Confirmed schedule', exact: true}).waitFor();
+        for (const width of [320, 390, 1280]) {
+          await flowPage.setViewportSize({width, height: 900});
+          assert.equal(await flowPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+          if (width !== 320) await flowPage.screenshot({path: join(frontend, 'test-results', `day4-today-${width}.png`), fullPage: true});
+        }
+        await flowPage.getByRole('button', {name: 'Start focusing', exact: true}).click();
+        await flowPage.getByRole('heading', {name: 'One task at a time', exact: true}).waitFor();
+        await flowPage.getByRole('button', {name: 'Mark as done', exact: true}).click();
+        await flowPage.getByRole('heading', {name: "Let's get things done.", exact: true}).waitFor();
+        const completed = (await (await fetch(`${api}/tasks`)).json()).find(task => task.id === approved.id);
+        assert.equal(completed.done, 1);
+        assert.ok(completed.scheduled_start);
+        const request = flowPage.waitForRequest(request => request.url().endsWith('/planning/propose'));
+        await planner.getByLabel('Plan from now (today only)', {exact: true}).check();
+        await planner.getByRole('button', {name: 'Generate plan', exact: true}).click();
+        assert.equal((await request).postDataJSON().plan_from_now, true);
+        await planner.getByText('Existing confirmed times are preserved.', {exact: false}).waitFor();
+        await planner.getByRole('button', {name: 'Reject plan', exact: true}).click();
+        assert.deepEqual(pageErrors, []);
+      } finally {await flowContext.close();}
     });
 
     await t.test('Today uses Seoul dates when the browser is in another timezone', async () => {

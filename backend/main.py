@@ -1,5 +1,5 @@
 ﻿from contextlib import asynccontextmanager
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from threading import Lock
 import json
@@ -14,7 +14,7 @@ from fastapi.responses import JSONResponse
 from ai import analyze_result as analyze, ai_mode, segment, MAX_SEGMENTS
 from jev_api import JevError
 from schemas import AnalysisInput, ISODate, JournalCreate, PriorityInput, TaskInput, TaskPatch, AvailabilityInput, PlanInput, PlanConfirmation
-from scheduling import dashboard, local_today, recommend
+from scheduling import dashboard, local_today, recommend, SEOUL
 from planning import propose_plan, validate_manual_schedule, schedule_conflicts, time_windows, PROVISIONAL_MINUTES
 from storage import connection, initialize, search_rows
 
@@ -242,7 +242,13 @@ def generate_plan(body: PlanInput):
         raise HTTPException(422, 'Save availability for this date before generating a plan.')
     if body.context and body.context.valid_for_date != body.date:
         raise HTTPException(422, 'Context must apply to the selected date.')
-    plan = propose_plan(rows, body.date, preference['windows'], preference['max_tasks'], context=body.context)
+    cutoff = None
+    if body.plan_from_now:
+        current = datetime.fromisoformat(utcnow()).astimezone(SEOUL).replace(tzinfo=None)
+        if current.date() == body.date:
+            # Round upward so no proposed minute begins before the fixed clock.
+            cutoff = current.replace(second=0, microsecond=0) + timedelta(minutes=bool(current.second or current.microsecond))
+    plan = propose_plan(rows, body.date, preference['windows'], preference['max_tasks'], context=body.context, not_before=cutoff)
     plan.update(plan_id=str(uuid4()), snapshot=workspace_snapshot(rows, preference))
     return {**plan, 'signature': plan_signature(plan)}
 
@@ -270,6 +276,10 @@ def confirm_plan(body: PlanConfirmation):
         preference = read_preferences(db, reference)
         if supplied['snapshot'] != workspace_snapshot(rows, preference):
             raise HTTPException(409, 'Tasks or availability changed. Generate a fresh plan before confirming.')
+        if supplied.get('planning_from'):
+            current = datetime.fromisoformat(utcnow()).astimezone(SEOUL).replace(tzinfo=None)
+            if any(datetime.fromisoformat(placement['start']) < current for placement in supplied['placements']):
+                raise HTTPException(409, 'A proposed start time has passed. Generate a fresh plan before confirming.')
         for placement in supplied['placements']:
             db.execute("UPDATE tasks SET scheduled_start=?,scheduled_minutes=?,scheduled_provisional=?,schedule_status='confirmed' WHERE id=?",
                        (placement['start'], placement['minutes'], int(placement['provisional']), placement['task_id']))

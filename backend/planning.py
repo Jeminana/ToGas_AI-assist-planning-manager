@@ -37,13 +37,16 @@ def time_windows(reference, windows):
     return sorted((datetime.fromisoformat(f'{reference.isoformat()}T{window["start"]}'), datetime.fromisoformat(f'{reference.isoformat()}T{window["end"]}')) for window in windows)
 
 
-def propose_plan(tasks, reference, windows, max_tasks, existing_confirmed=None, context=None):
+def propose_plan(tasks, reference, windows, max_tasks, existing_confirmed=None, context=None, not_before=None):
     """Greedy earliest-fit in priority order; do not move confirmed reservations.
 
     Optional user context is accepted for a future suitability policy. It does
     not change priority or placement in this version, and absence is supported.
     """
     available = time_windows(reference, windows)
+    limited = not_before is not None and not_before.date() >= reference
+    if limited:
+        available = [(max(start, not_before), end) for start, end in available if end > not_before]
     confirmed = existing_confirmed if existing_confirmed is not None else [task for task in tasks if task.get('scheduled_start')]
     day_confirmed = [task for task in confirmed if task['scheduled_start'][:10] == reference.isoformat()]
     occupied = [reservation(task) for task in confirmed]
@@ -75,13 +78,14 @@ def propose_plan(tasks, reference, windows, max_tasks, existing_confirmed=None, 
                     occupied.append((start, end))
                     break
             else:
-                reason = ('no_fitting_window', 'No uninterrupted available window fits this task duration.')
+                reason = ('no_remaining_window', 'No uninterrupted window in the remaining time fits this duration.') if limited else ('no_fitting_window', 'No uninterrupted available window fits this task duration.')
         if reason:
             unscheduled.append({'task_id': task['id'], 'title': task['title'], 'code': reason[0], 'reason': reason[1]})
     return {'date': reference.isoformat(), 'status': 'proposed', 'placements': placements, 'unscheduled': unscheduled,
             'confirmed': [{'task_id': task['id'], 'title': task['title'], 'start': task['scheduled_start'], 'minutes': task.get('scheduled_minutes') or duration(task),
                            'provisional': bool(task.get('scheduled_provisional'))} for task in sorted(day_confirmed, key=lambda item: (item['scheduled_start'], item['id']))],
-            'conflicts': schedule_conflicts(confirmed, reference, available),
+            'conflicts': schedule_conflicts(confirmed, reference, time_windows(reference, windows)),
+            'planning_from': not_before.isoformat() if limited else None,
             'context_note': 'User context is accepted but does not change placement or priority yet.' if context else None,
             'provisional_minutes': PROVISIONAL_MINUTES}
 

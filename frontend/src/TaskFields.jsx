@@ -1,4 +1,5 @@
 import React from 'react';
+import {localDate} from './date.js';
 
 export const blankTask = {title: '', category: 'other', urgency_score: 1, due_date: '', importance: 3, estimated_minutes: null, effort_level: 3, scheduled_start: null};
 
@@ -11,6 +12,7 @@ export default function TaskFields({value, onChange, disabled = false, titleLabe
         {['study', 'work', 'personal', 'health', 'other'].map(category => <option key={category} value={category}>{category[0].toUpperCase() + category.slice(1)}</option>)}
       </select></label>
       <label>Urgency<select value={value.urgency_score} onChange={event => change('urgency_score', Number(event.target.value))}>
+        {Number.isFinite(value.urgency_score) && !Number.isInteger(value.urgency_score) && <option value={value.urgency_score}>Suggested: {value.urgency_score.toFixed(2)} / 3</option>}
         {['Not urgent', 'Low', 'Moderate', 'High'].map((label, index) => <option key={index} value={index}>{label}</option>)}
       </select></label>
     </div>
@@ -28,7 +30,12 @@ export default function TaskFields({value, onChange, disabled = false, titleLabe
 }
 
 export function TaskMeta({task}) {
-  return <small>{task.category} · urgency {task.urgency_score.toFixed(2)} · importance {task.importance ?? 3}/5 · effort {task.effort_level ?? 3}/5{task.due_date ? ` · due ${task.due_date}` : ' · no deadline'}
-    {task.scheduled_start ? <><br /><time dateTime={task.scheduled_start}>{task.scheduled_start.replace('T', ' ').slice(0, 16)}</time> Seoul · {task.scheduled_minutes} min{task.scheduled_provisional ? ' (provisional)' : ''} · confirmed</> : <> · unscheduled{task.estimated_minutes ? ` · ${task.estimated_minutes} min` : ' · duration unknown'}</>}
-  </small>;
+  return <>
+    {task.scheduled_start && <small className="schedule-time"><time dateTime={task.scheduled_start}><strong>{task.scheduled_start.slice(11, 16)}</strong></time> · {task.scheduled_minutes} min{task.scheduled_provisional ? ' (provisional)' : ''} · confirmed · {task.scheduled_start.slice(0, 10)} Seoul</small>}
+    <small>{task.category}{task.due_date ? ` · ${!task.done && task.due_date < localDate() ? 'overdue' : 'due'} ${task.due_date}` : ' · no deadline'}
+      {!task.scheduled_start && <> · unscheduled{task.estimated_minutes ? ` · ${task.estimated_minutes} min` : ' · duration unknown'}</>}
+      {!task.done && (task.urgency_score >= 2.5 ? ' · high urgency' : (task.importance ?? 3) >= 4 ? ' · important' : '')}
+    </small>
+    <details className="task-metadata"><summary>Task details</summary><small>Urgency {task.urgency_score.toFixed(2)}/3 · importance {task.importance ?? 3}/5 · effort {task.effort_level ?? 3}/5</small></details>
+  </>;
 }

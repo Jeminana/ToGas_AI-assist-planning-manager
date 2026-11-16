@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import re
 from functools import lru_cache
+from time import perf_counter
 import settings
 from jev_api import JevDecision
 from scheduling import due_date_from_text, local_today
@@ -64,9 +65,9 @@ class MockDecision:
         category = 'other'
         for name, pattern in {
             'study': r'exam|homework|assignment|nlp|study|lecture|notes|시험|과제|공부',
-            'work': r'work|meeting|client|internship|report|업무|회의',
-            'health': r'exercise|doctor|medical|walk|gym|운동|병원',
-            'personal': r'clean|buy|grocer|room|pay|laundry|friend|cook|청소|구매|친구|요리',
+            'work': r'work|meeting|client|internship|report|project|업무|회의|보고서',
+            'health': r'exercise|doctor|dentist|medical|walk|gym|운동|병원',
+            'personal': r'clean|buy|grocer|room|pay|laundry|friend|mother|father|cook|청소|구매|친구|요리',
         }.items():
             if re.search(pattern, text, re.I):
                 category = name
@@ -93,13 +94,14 @@ def confidence(value):
     try:
         return number(value, 0, 1)
     except (ValueError, TypeError):
-        return 0.0
+        return None
 
 def analyze(text: str, reference=None) -> list[dict]:
     return analyze_result(text, reference)['proposals']
 
 
 def analyze_result(text: str, reference=None) -> dict:
+    started = perf_counter()
     reference = reference or local_today()
     mode = ai_mode()
     if mode == 'mock':
@@ -138,30 +140,38 @@ def analyze_result(text: str, reference=None) -> dict:
             reasons.append('It is uncertain whether this sentence describes an action.')
         category = cat.get('choice')
         if not isinstance(category, str) or category not in QUESTIONS['category']['criteria']:
-            category, cat_conf = 'other', 0.0
+            category, cat_conf = 'other', None
             reasons.append('The category was unavailable; Other is a placeholder to check.')
         try:
             urgency = number(urg.get('score'), 0, 3)
         except (ValueError, TypeError):
-            urgency, urg_conf = 1.0, 0.0
+            urgency, urg_conf = 1.0, None
             reasons.append('The urgency was unavailable; Low is a placeholder to check.')
-        if mode != 'mock' and cat_conf < 0.8:
+        if mode != 'mock' and (cat_conf is None or cat_conf < 0.8):
             reasons.append('The suggested category is uncertain.')
-        if mode != 'mock' and urg_conf < 0.8:
+        if mode != 'mock' and (urg_conf is None or urg_conf < 0.8):
             reasons.append('The suggested urgency is uncertain.')
         if len(sentence) > 250:
             reasons.append('The task title was shortened; check it against the original text.')
         proposals.append({
             "title": sentence[:250],
             "source_text": candidate.source_text,
+            "action_span": sentence,
             "category": category,
             "urgency_score": round(urgency, 3),
             "due_date": due_date_from_text(sentence, reference),
             "action_probability": round(probability, 3),
-            "category_confidence": round(cat_conf, 3),
-            "urgency_confidence": round(urg_conf, 3),
+            "category_confidence": round(cat_conf, 3) if cat_conf is not None else None,
+            "urgency_confidence": round(urg_conf, 3) if urg_conf is not None else None,
             "needs_review": bool(reasons),
             "review_reasons": reasons,
             "title_truncated": len(sentence) > 250,
         })
-    return {'proposals': proposals, 'provider': mode, **metadata}
+    seen = set()
+    for proposal in proposals:
+        key = ' '.join(proposal['action_span'].casefold().split()).strip(' .!?。！')
+        if key in seen:
+            proposal['review_reasons'].append('This intention appears more than once. Check whether another task is needed.')
+            proposal['needs_review'] = True
+        seen.add(key)
+    return {'proposals': proposals, 'provider': mode, **metadata, 'analysis_latency_ms': round((perf_counter() - started) * 1000, 3)}

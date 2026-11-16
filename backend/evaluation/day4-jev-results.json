@@ -1,0 +1,214 @@
+{
+  "mode": "jev",
+  "is_jev_evaluation": true,
+  "is_local_model_evaluation": false,
+  "requested_examples": 3,
+  "live_request_limit": 3,
+  "reference_date": "2026-11-14",
+  "created_at": "2026-11-16T04:09:07.413411+00:00",
+  "metrics": {
+    "examples": 3,
+    "errors": 0,
+    "true_positives": 3,
+    "false_positives": 0,
+    "false_negatives": 0,
+    "task_precision": 1.0,
+    "task_recall": 1.0,
+    "extraction_f1": 1.0,
+    "exact_task_count_accuracy": 1.0,
+    "category_accuracy": 1.0,
+    "category_examples": 3,
+    "explicit_date_accuracy": 1.0,
+    "explicit_date_examples": 2,
+    "reflection_completed_false_positives": 0,
+    "reflection_completed_examples": 0,
+    "segmentation_missing_action_spans": 0,
+    "classification_missing_action_spans": 0
+  },
+  "results": [
+    {
+      "id": "d4-07",
+      "expected": {
+        "id": "d4-07",
+        "language": "en",
+        "text": "I'm stressed because I need to submit my assignment tomorrow.",
+        "reference_date": "2026-11-14",
+        "expected_count": 1,
+        "expected_actions": [
+          {
+            "action_span": "I need to submit my assignment tomorrow.",
+            "category": "study",
+            "due_date": "2026-11-15"
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "I need to submit my assignment tomorrow."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "I need to submit my assignment tomorrow.",
+            "source_text": "I'm stressed because I need to submit my assignment tomorrow.",
+            "action_span": "I need to submit my assignment tomorrow.",
+            "category": "study",
+            "urgency_score": 2.9,
+            "due_date": "2026-11-15",
+            "action_probability": 0.99,
+            "category_confidence": 1.0,
+            "urgency_confidence": 0.91,
+            "needs_review": true,
+            "review_reasons": [
+              "An explicit intention was separated from a reflection; check the original sentence."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "jev",
+        "model": "jev-1.14.0",
+        "usage": {
+          "input_tokens": 584,
+          "output_tokens": 92
+        },
+        "request_count": 1,
+        "cached": false,
+        "analysis_latency_ms": 512.811
+      },
+      "checks": [
+        {
+          "action_span": "I need to submit my assignment tomorrow.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": true,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 515.328
+    },
+    {
+      "id": "d4-10",
+      "expected": {
+        "id": "d4-10",
+        "language": "ko",
+        "text": "내일 과제를 제출하고 친구를 만나야 해.",
+        "reference_date": "2026-11-14",
+        "expected_count": 2,
+        "expected_actions": [
+          {
+            "action_span": "내일 과제를 제출",
+            "category": "study",
+            "due_date": "2026-11-15"
+          },
+          {
+            "action_span": "친구를 만나야 해.",
+            "category": "personal",
+            "due_date": null
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "내일 과제를 제출",
+        "친구를 만나야 해."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "내일 과제를 제출",
+            "source_text": "내일 과제를 제출하고 친구를 만나야 해.",
+            "action_span": "내일 과제를 제출",
+            "category": "study",
+            "urgency_score": 2.78,
+            "due_date": "2026-11-15",
+            "action_probability": 0.98,
+            "category_confidence": 1.0,
+            "urgency_confidence": 0.78,
+            "needs_review": true,
+            "review_reasons": [
+              "Multiple actions were separated from one sentence; check shared objects and deadlines in the original text.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          },
+          {
+            "title": "친구를 만나야 해.",
+            "source_text": "내일 과제를 제출하고 친구를 만나야 해.",
+            "action_span": "친구를 만나야 해.",
+            "category": "personal",
+            "urgency_score": 0.43,
+            "due_date": null,
+            "action_probability": 0.97,
+            "category_confidence": 0.94,
+            "urgency_confidence": 0.56,
+            "needs_review": true,
+            "review_reasons": [
+              "Multiple actions were separated from one sentence; check shared objects and deadlines in the original text.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "jev",
+        "model": "jev-1.14.0",
+        "usage": {
+          "input_tokens": 884,
+          "output_tokens": 180
+        },
+        "request_count": 1,
+        "cached": false,
+        "analysis_latency_ms": 196.285
+      },
+      "checks": [
+        {
+          "action_span": "내일 과제를 제출",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": true,
+          "review_matches": true
+        },
+        {
+          "action_span": "친구를 만나야 해.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 197.419
+    },
+    {
+      "id": "d4-12",
+      "expected": {
+        "id": "d4-12",
+        "language": "en",
+        "text": "I don't need to buy groceries anymore.",
+        "reference_date": "2026-11-14",
+        "expected_count": 0,
+        "expected_actions": [],
+        "manual_review_required": false,
+        "negative_kind": "negated"
+      },
+      "segments": [
+        "I don't need to buy groceries anymore."
+      ],
+      "result": {
+        "proposals": [],
+        "provider": "jev",
+        "model": "jev-1.14.0",
+        "usage": {
+          "input_tokens": 585,
+          "output_tokens": 92
+        },
+        "request_count": 1,
+        "cached": false,
+        "analysis_latency_ms": 186.15
+      },
+      "checks": [],
+      "error": null,
+      "evaluation_latency_ms": 186.31
+    }
+  ]
+}

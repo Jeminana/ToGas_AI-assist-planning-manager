@@ -13,10 +13,13 @@ def evaluate_journals(cases):
     for case in cases:
         try:
             result = analyze_result(case['text'], date.fromisoformat(case['reference_date']))
-            proposed = {proposal['source_text']: proposal for proposal in result['proposals']}
+            remaining = list(result['proposals'])
             checks = []
             for expected in case['expected']:
-                actual = proposed.get(expected['source_text'])
+                span = expected.get('action_span', expected['source_text'])
+                actual = next((proposal for proposal in remaining if proposal.get('action_span', proposal['source_text']) == span), None)
+                if actual is not None:
+                    remaining.remove(actual)
                 checks.append({
                     'source_text': expected['source_text'],
                     'actionability_matches': bool(actual) == expected['actionable'],

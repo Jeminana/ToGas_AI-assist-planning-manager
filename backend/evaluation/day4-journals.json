@@ -1,0 +1,617 @@
+[
+  {
+    "id": "d4-01",
+    "language": "en",
+    "text": "Meet friend. Cook for tonight.",
+    "reference_date": "2026-11-14",
+    "expected_count": 2,
+    "expected_actions": [
+      {
+        "action_span": "Meet friend.",
+        "category": "personal",
+        "due_date": null
+      },
+      {
+        "action_span": "Cook for tonight.",
+        "category": "personal",
+        "due_date": null
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-02",
+    "language": "en",
+    "text": "Buy milk and clean my room.",
+    "reference_date": "2026-11-14",
+    "expected_count": 2,
+    "expected_actions": [
+      {
+        "action_span": "Buy milk",
+        "category": "personal",
+        "due_date": null
+      },
+      {
+        "action_span": "clean my room.",
+        "category": "personal",
+        "due_date": null
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-03",
+    "language": "en",
+    "text": "Buy bread and butter.",
+    "reference_date": "2026-11-14",
+    "expected_count": 1,
+    "expected_actions": [
+      {
+        "action_span": "Buy bread and butter.",
+        "category": "personal",
+        "due_date": null
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-04",
+    "language": "en",
+    "text": "Study Python, cook dinner, and call my mother.",
+    "reference_date": "2026-11-14",
+    "expected_count": 3,
+    "expected_actions": [
+      {
+        "action_span": "Study Python",
+        "category": "study",
+        "due_date": null
+      },
+      {
+        "action_span": "cook dinner",
+        "category": "personal",
+        "due_date": null
+      },
+      {
+        "action_span": "call my mother.",
+        "category": "personal",
+        "due_date": null
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-05",
+    "language": "en",
+    "text": "I'm exhausted today.",
+    "reference_date": "2026-11-14",
+    "expected_count": 0,
+    "expected_actions": [],
+    "manual_review_required": false,
+    "negative_kind": "reflection"
+  },
+  {
+    "id": "d4-06",
+    "language": "en",
+    "text": "I finished my report yesterday.",
+    "reference_date": "2026-11-14",
+    "expected_count": 0,
+    "expected_actions": [],
+    "manual_review_required": false,
+    "negative_kind": "completed"
+  },
+  {
+    "id": "d4-07",
+    "language": "en",
+    "text": "I'm stressed because I need to submit my assignment tomorrow.",
+    "reference_date": "2026-11-14",
+    "expected_count": 1,
+    "expected_actions": [
+      {
+        "action_span": "I need to submit my assignment tomorrow.",
+        "category": "study",
+        "due_date": "2026-11-15"
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-08",
+    "language": "en",
+    "text": "I need to buy groceries and I should finish my project.",
+    "reference_date": "2026-11-14",
+    "expected_count": 2,
+    "expected_actions": [
+      {
+        "action_span": "I need to buy groceries",
+        "category": "personal",
+        "due_date": null
+      },
+      {
+        "action_span": "I should finish my project.",
+        "category": "work",
+        "due_date": null
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-09",
+    "language": "en",
+    "text": "Tomorrow I have a meeting, then I need to cook dinner.",
+    "reference_date": "2026-11-14",
+    "expected_count": 2,
+    "expected_actions": [
+      {
+        "action_span": "Tomorrow I have a meeting",
+        "category": "work",
+        "due_date": "2026-11-15"
+      },
+      {
+        "action_span": "I need to cook dinner.",
+        "category": "personal",
+        "due_date": null
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-10",
+    "language": "ko",
+    "text": "내일 과제를 제출하고 친구를 만나야 해.",
+    "reference_date": "2026-11-14",
+    "expected_count": 2,
+    "expected_actions": [
+      {
+        "action_span": "내일 과제를 제출",
+        "category": "study",
+        "due_date": "2026-11-15"
+      },
+      {
+        "action_span": "친구를 만나야 해.",
+        "category": "personal",
+        "due_date": null
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-11",
+    "language": "ko",
+    "text": "오늘 너무 피곤하지만 내일까지 보고서를 끝내야 해.",
+    "reference_date": "2026-11-14",
+    "expected_count": 1,
+    "expected_actions": [
+      {
+        "action_span": "내일까지 보고서를 끝내야 해.",
+        "category": "work",
+        "due_date": "2026-11-15"
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-12",
+    "language": "en",
+    "text": "I don't need to buy groceries anymore.",
+    "reference_date": "2026-11-14",
+    "expected_count": 0,
+    "expected_actions": [],
+    "manual_review_required": false,
+    "negative_kind": "negated"
+  },
+  {
+    "id": "d4-13",
+    "language": "en",
+    "text": "Submit homework on 2026-11-16.",
+    "reference_date": "2026-11-14",
+    "expected_count": 1,
+    "expected_actions": [
+      {
+        "action_span": "Submit homework on 2026-11-16.",
+        "category": "study",
+        "due_date": "2026-11-16"
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-14",
+    "language": "en",
+    "text": "read notes then cook dinner",
+    "reference_date": "2026-11-14",
+    "expected_count": 2,
+    "expected_actions": [
+      {
+        "action_span": "read notes",
+        "category": "study",
+        "due_date": null
+      },
+      {
+        "action_span": "cook dinner",
+        "category": "personal",
+        "due_date": null
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-15",
+    "language": "en",
+    "text": "meet friend cook dinner",
+    "reference_date": "2026-11-14",
+    "expected_count": 2,
+    "expected_actions": [
+      {
+        "action_span": "meet friend",
+        "category": "personal",
+        "due_date": null
+      },
+      {
+        "action_span": "cook dinner",
+        "category": "personal",
+        "due_date": null
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-16",
+    "language": "en",
+    "text": "- Read notes tomorrow.\n- Pay the electricity bill today.",
+    "reference_date": "2026-11-14",
+    "expected_count": 2,
+    "expected_actions": [
+      {
+        "action_span": "Read notes tomorrow.",
+        "category": "study",
+        "due_date": "2026-11-15"
+      },
+      {
+        "action_span": "Pay the electricity bill today.",
+        "category": "personal",
+        "due_date": "2026-11-14"
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-17",
+    "language": "en",
+    "text": "I already cleaned my room.",
+    "reference_date": "2026-11-14",
+    "expected_count": 0,
+    "expected_actions": [],
+    "manual_review_required": false,
+    "negative_kind": "completed"
+  },
+  {
+    "id": "d4-18",
+    "language": "en",
+    "text": "I should not cook tonight.",
+    "reference_date": "2026-11-14",
+    "expected_count": 0,
+    "expected_actions": [],
+    "manual_review_required": false,
+    "negative_kind": "negated"
+  },
+  {
+    "id": "d4-19",
+    "language": "en",
+    "text": "I want to be happier.",
+    "reference_date": "2026-11-14",
+    "expected_count": 0,
+    "expected_actions": [],
+    "manual_review_required": false,
+    "negative_kind": "vague"
+  },
+  {
+    "id": "d4-20",
+    "language": "en",
+    "text": "Maybe I should improve my life someday.",
+    "reference_date": "2026-11-14",
+    "expected_count": 0,
+    "expected_actions": [],
+    "manual_review_required": false,
+    "negative_kind": "vague"
+  },
+  {
+    "id": "d4-21",
+    "language": "en",
+    "text": "Maybe I should book a dentist appointment.",
+    "reference_date": "2026-11-14",
+    "expected_count": 1,
+    "expected_actions": [
+      {
+        "action_span": "Maybe I should book a dentist appointment.",
+        "category": "health",
+        "due_date": null
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-22",
+    "language": "en",
+    "text": "Buy milk. Buy milk.",
+    "reference_date": "2026-11-14",
+    "expected_count": 2,
+    "expected_actions": [
+      {
+        "action_span": "Buy milk.",
+        "category": "personal",
+        "due_date": null
+      },
+      {
+        "action_span": "Buy milk.",
+        "category": "personal",
+        "due_date": null
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-23",
+    "language": "en",
+    "text": "Meet Dr. Kim tomorrow. Read chapter 3.5.",
+    "reference_date": "2026-11-14",
+    "expected_count": 2,
+    "expected_actions": [
+      {
+        "action_span": "Meet Dr. Kim tomorrow.",
+        "category": "personal",
+        "due_date": "2026-11-15"
+      },
+      {
+        "action_span": "Read chapter 3.5.",
+        "category": "study",
+        "due_date": null
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-24",
+    "language": "en",
+    "text": "Buy bread, butter, and milk.",
+    "reference_date": "2026-11-14",
+    "expected_count": 1,
+    "expected_actions": [
+      {
+        "action_span": "Buy bread, butter, and milk.",
+        "category": "personal",
+        "due_date": null
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-25",
+    "language": "en",
+    "text": "I finished my report but I need to buy groceries.",
+    "reference_date": "2026-11-14",
+    "expected_count": 1,
+    "expected_actions": [
+      {
+        "action_span": "I need to buy groceries.",
+        "category": "personal",
+        "due_date": null
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-26",
+    "language": "en",
+    "text": "I feel tired but I should call my mother.",
+    "reference_date": "2026-11-14",
+    "expected_count": 1,
+    "expected_actions": [
+      {
+        "action_span": "I should call my mother.",
+        "category": "personal",
+        "due_date": null
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-27",
+    "language": "ko",
+    "text": "오늘 기분이 좋다.",
+    "reference_date": "2026-11-14",
+    "expected_count": 0,
+    "expected_actions": [],
+    "manual_review_required": false,
+    "negative_kind": "reflection"
+  },
+  {
+    "id": "d4-28",
+    "language": "ko",
+    "text": "방 청소는 이미 끝냈다.",
+    "reference_date": "2026-11-14",
+    "expected_count": 0,
+    "expected_actions": [],
+    "manual_review_required": false,
+    "negative_kind": "completed"
+  },
+  {
+    "id": "d4-29",
+    "language": "ko",
+    "text": "오늘 운동해야 한다.",
+    "reference_date": "2026-11-14",
+    "expected_count": 1,
+    "expected_actions": [
+      {
+        "action_span": "오늘 운동해야 한다.",
+        "category": "health",
+        "due_date": "2026-11-14"
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-30",
+    "language": "ko",
+    "text": "내일 과제를 제출하지 않아도 된다.",
+    "reference_date": "2026-11-14",
+    "expected_count": 0,
+    "expected_actions": [],
+    "manual_review_required": false,
+    "negative_kind": "negated"
+  },
+  {
+    "id": "d4-31",
+    "language": "ko",
+    "text": "내일 공부하고 방을 청소해야 해.",
+    "reference_date": "2026-11-14",
+    "expected_count": 2,
+    "expected_actions": [
+      {
+        "action_span": "내일 공부",
+        "category": "study",
+        "due_date": "2026-11-15"
+      },
+      {
+        "action_span": "방을 청소해야 해.",
+        "category": "personal",
+        "due_date": null
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-32",
+    "language": "ko",
+    "text": "빵하고 우유를 사야 해.",
+    "reference_date": "2026-11-14",
+    "expected_count": 1,
+    "expected_actions": [
+      {
+        "action_span": "빵하고 우유를 사야 해.",
+        "category": "personal",
+        "due_date": null
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-33",
+    "language": "ko",
+    "text": "친구하고 과제를 제출해야 한다.",
+    "reference_date": "2026-11-14",
+    "expected_count": 1,
+    "expected_actions": [
+      {
+        "action_span": "친구하고 과제를 제출해야 한다.",
+        "category": "study",
+        "due_date": null
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-34",
+    "language": "mixed",
+    "text": "I need to submit 과제 tomorrow. 오늘은 피곤하다.",
+    "reference_date": "2026-11-14",
+    "expected_count": 1,
+    "expected_actions": [
+      {
+        "action_span": "I need to submit 과제 tomorrow.",
+        "category": "study",
+        "due_date": "2026-11-15"
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-35",
+    "language": "mixed",
+    "text": "내일 과제 제출; Cook dinner.",
+    "reference_date": "2026-11-14",
+    "expected_count": 2,
+    "expected_actions": [
+      {
+        "action_span": "내일 과제 제출",
+        "category": "study",
+        "due_date": "2026-11-15"
+      },
+      {
+        "action_span": "Cook dinner.",
+        "category": "personal",
+        "due_date": null
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-36",
+    "language": "en",
+    "text": "I will not buy milk and clean my room.",
+    "reference_date": "2026-11-14",
+    "expected_count": 0,
+    "expected_actions": [],
+    "manual_review_required": false,
+    "negative_kind": "negated"
+  },
+  {
+    "id": "d4-37",
+    "language": "en",
+    "text": "Read notes next Monday.",
+    "reference_date": "2026-11-14",
+    "expected_count": 1,
+    "expected_actions": [
+      {
+        "action_span": "Read notes next Monday.",
+        "category": "study",
+        "due_date": "2026-11-16"
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-38",
+    "language": "en",
+    "text": "Schedule a doctor appointment this weekend.",
+    "reference_date": "2026-11-14",
+    "expected_count": 1,
+    "expected_actions": [
+      {
+        "action_span": "Schedule a doctor appointment this weekend.",
+        "category": "health",
+        "due_date": null
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-39",
+    "language": "en",
+    "text": "Write \"buy milk and clean my room\" tomorrow.",
+    "reference_date": "2026-11-14",
+    "expected_count": 1,
+    "expected_actions": [
+      {
+        "action_span": "Write \"buy milk and clean my room\" tomorrow.",
+        "category": null,
+        "due_date": "2026-11-15"
+      }
+    ],
+    "manual_review_required": true
+  },
+  {
+    "id": "d4-40",
+    "language": "en",
+    "text": "I intend to annotate my notes.",
+    "reference_date": "2026-11-14",
+    "expected_count": 1,
+    "expected_actions": [
+      {
+        "action_span": "I intend to annotate my notes.",
+        "category": "study",
+        "due_date": null
+      }
+    ],
+    "manual_review_required": true
+  }
+]

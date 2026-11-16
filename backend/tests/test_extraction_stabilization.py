@@ -45,7 +45,7 @@ class SegmentationTests(unittest.TestCase):
         self.assertTrue(all(row.review_reasons for row in result))
 
     def test_ambiguous_coordination_and_korean_are_preserved_for_review(self):
-        for text in ['Buy milk and polish the table.', 'Read and review my notes.', '내일 과제를 제출하고 친구를 만나야 해.']:
+        for text in ['Buy milk and polish the table.', 'Read and review my notes.', '친구하고 과제를 제출해야 한다.']:
             with self.subTest(text=text):
                 result = candidates(text)
                 self.assertEqual([row.text for row in result], [text])
@@ -82,7 +82,7 @@ class ExtractionTests(unittest.TestCase):
             ('I feel tired today.', 0),
             ('I finished my assignment yesterday.', 0),
             ('I am stressed because I need to submit my report.', 1),
-            ('내일 과제를 제출하고 친구를 만나야 해.', 1),  # documented conservative limitation
+            ('내일 과제를 제출하고 친구를 만나야 해.', 2),  # Day 4 supports this guarded compound.
         ]
         for text, count in cases:
             with self.subTest(text=text):
