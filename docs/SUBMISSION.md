@@ -89,6 +89,25 @@ http://127.0.0.1:5173을 여세요. 모의 모드는 키나 모델 호출이 필
 
 **English:** This local demo has no authentication or cloud sync. Review ambiguous language manually. Small synthetic datasets do not establish general model quality.
 
+## 향후 개선 계획
+
+현재 우선순위는 **인터넷 없이 사용할 수 있는 로컬 앱**입니다. 아래 항목은 향후 계획이며 구현·검증된 기능이 아닙니다. 현재 오프라인 분석은 규칙 기반 `mock`이고, 기존 `local` 경로는 별도 OpenJevX 파일을 요구합니다. Qwen/Ollama 연동은 아직 없습니다. 클라우드 모델 추가는 후순위로 둡니다.
+
+| 순서 | 개선 항목 | 구현 방향과 확인 기준 |
+| --- | --- | --- |
+| 1 | 로컬 AI로 Jev 대체 검토 | Qwen3-8B와 Ollama를 첫 평가 후보로 삼습니다. 모델을 미리 내려받은 뒤 네트워크를 끊고 영어·한국어 행동 여부, 분류, 긴급도와 전체 검토 흐름을 확인합니다. 대상 Windows PC의 RAM·GPU 메모리, 초기 로딩 시간과 분석 지연을 측정해 모델 크기·양자화를 결정합니다. 특정 하드웨어에서의 실행 속도나 품질은 아직 보장하지 않습니다. |
+| 2 | 한국어 추출과 독립 평가 강화 | 모델 호출 전 후보 분리도 함께 개선합니다. 복합 행동, 부정·완료, 공유 목적어·기한, 모호한 날짜와 15개 초과 입력을 포함하고, 개발에 사용하지 않은 별도 정답 세트로 평가합니다. 규칙과 로컬 모델의 정밀도·재현율, 작업 개수·분류·날짜 정확도와 지연을 각각 보고합니다. |
+| 3 | 초안 복구와 로컬 데이터 보호 | 기록·작업 초안과 재시도 ID를 새로 고침 후 복구하고, 저장 여부를 먼저 확인하여 중복 생성을 방지합니다. 로컬 백업·복원과 내보내기·가져오기를 제공하며, 복원 전 미리 보기와 명시적 확인으로 기존 데이터 덮어쓰기를 방지합니다. |
+| 4 | 오프라인 설치·실행 간소화 | 백엔드·프런트엔드를 함께 시작하는 Windows 실행 절차와 상태 점검을 제공합니다. 초기 의존성·모델 설치에는 다운로드가 필요할 수 있음을 구분하고, 준비된 환경에서 네트워크 없이 실행·분석·저장되는지 확인합니다. 모델이 없거나 메모리가 부족하면 원인과 수동 작업·규칙 기반 모드 선택지를 표시합니다. |
+| 5 | 현실적인 일정 수정 | 확정 시간이 지난 미완료 작업의 재배정·해제를 사용자가 선택하게 하고, 작업 사이 여유 시간과 기본 예상 시간을 조정할 수 있게 합니다. 이후 반복 작업·여러 날 계획을 검토하되 기존 확정 시간을 자동 변경하지 않고 변경 제안을 먼저 보여 줍니다. |
+| 6 | 한국어 사용성과 접근성 | 화면의 한국어·영어 전환, 키보드만으로 기록→검토→완료하기, 입력 레이블·포커스·오류 안내와 모바일 가독성을 개선합니다. 일별 에너지 입력은 선택 사항으로 두고, 사용자가 입력한 날짜별 값만 사용하며 추천에 반영한 이유를 설명합니다. |
+
+로컬 모델은 JSON 스키마로 응답 형식을 제한하고 백엔드에서 값·후보 ID·누락을 검증하는 어댑터로 연결할 계획입니다. LLM이 생성한 신뢰도 숫자를 Jev의 행동 확률과 같은 의미로 사용하지 않으며, 검증되지 않은 신뢰도는 제공하지 않습니다. 원문 보존·사용자 승인·명시적 날짜 처리·결정적 일정 배정은 유지하고, 로컬 분석 실패를 클라우드 호출로 자동 전환하지 않습니다.
+
+후보 선정 참고: [Qwen3-8B 공식 모델 카드](https://huggingface.co/Qwen/Qwen3-8B), [Ollama 구조화 출력 문서](https://github.com/ollama/ollama/blob/main/docs/capabilities/structured-outputs.mdx). 이 자료는 모델·실행 도구의 기능을 설명하며 ToGas에서의 성능 검증 결과는 아닙니다.
+
+**English:** Future work prioritizes offline use: evaluate Qwen3-8B through Ollama, improve Korean extraction with an independent test set, recover drafts and add local backups, simplify Windows startup, improve rescheduling, and add Korean UI/accessibility support. These are proposals, not shipped features. Initial downloads may require internet; prepared installations should run offline. Model-generated confidence will not be treated as calibrated probability, and failures will not trigger automatic cloud calls.
+
 ## 오프라인 검사 재현
 
 루트에서 실행합니다.

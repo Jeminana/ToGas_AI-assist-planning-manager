@@ -159,11 +159,13 @@ Day 3 전 추출 안정화를 완료했습니다. 예제·제한·제안 구조�
 
 ## 현재 남은 검토 사항
 
-1. 실제 전체 브라우저 흐름, 제한 평가, 제출 안내·스크린샷, 최종 설치 검사는 완료했습니다. 일반 개발은 모의 모드로 유지합니다.
+1. 실제 전체 브라우저 흐름, 제한 평가, 제출 안내·스크린샷, 최종 설치 검사는 완료했습니다. 일반 개발은 모의 모드로 유지합니다. 향후 개선은 오프라인 사용을 우선하며 Qwen3-8B/Ollama 로컬 모델 평가를 첫 후보로 둡니다. 현재 Qwen/Ollama 연동·다운로드·성능 검증은 하지 않았습니다.
 2. 더 넓은 정답 데이터의 실제 평가는 향후 선택 작업이며 공유 서비스 사용을 명시적으로 결정해야 합니다. 모의 지표와 분리해 기록하세요.
 3. 실제 결과가 더 쌓이면 신뢰도 임계값과 영어·한국어 예제를 재검토하세요. 연결 시험 1건이나 소수 평가로 일반 정확도를 추론하지 않습니다.
 
-**English:** Submission preparation and current verification are complete. Broader live evaluation and confidence calibration remain optional future work.
+4. 한국어 추출·독립 평가, 초안 복구·로컬 백업, Windows 실행 간소화, 일정 재배정, 한국어 화면·접근성을 후속 과제로 정리했습니다. 구현 방향과 확인 기준은 [제출 안내의 향후 개선 계획](SUBMISSION.md#향후-개선-계획)을 따릅니다. 클라우드 모델 추가는 후순위입니다.
+
+**English:** Submission preparation and current verification are complete. Future work prioritizes offline AI evaluation and local reliability/usability; Qwen/Ollama is not integrated. See the submission roadmap for proposed work. Broader live evaluation and confidence calibration remain optional.
 
 ## 제출 범위의 제한
 

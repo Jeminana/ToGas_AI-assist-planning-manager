@@ -156,6 +156,12 @@ frontend/src/
 
 **English:** SQLite stores data locally. Additive migrations preserve records, and request IDs prevent duplicate saves. Schedules are saved only after confirmation.
 
+## 향후 개선
+
+오프라인 사용을 우선합니다. Qwen3-8B/Ollama 기반 로컬 AI를 Jev 대체 후보로 평가하고, 한국어 추출·독립 정답 평가, 새로 고침 후 초안 복구·로컬 백업, Windows 실행 간소화, 일정 재배정, 한국어 화면·접근성을 순서대로 개선할 계획입니다. 모두 향후 계획이며 현재 구현된 기능이 아닙니다. 현재 오프라인 분석은 규칙 기반 `mock`입니다. 자세한 구현 방향과 확인 기준은 [제출 안내의 향후 개선 계획](docs/SUBMISSION.md#향후-개선-계획)을 참고하세요.
+
+**English:** Offline use comes first. Planned work includes local AI evaluation, better Korean extraction, draft recovery and backups, simpler Windows startup, rescheduling, and localization/accessibility. Qwen/Ollama is not integrated yet.
+
 ## 제한 사항
 
 로컬 데모로 인증·클라우드 동기화·배포 보안은 없습니다. 드문 약어, 모호한 병렬 구조, 다양한 한국어 복합 표현, 공유 목적어·기한은 오해할 수 있습니다. 알려지지 않은 명령형이나 구분자 없는 행동 나열은 놓칠 수 있습니다. 모호한 후보는 원문과 검토 이유를 유지합니다. 분석당 첫 15개 후보만 처리하며 긴 입력은 경고합니다.
