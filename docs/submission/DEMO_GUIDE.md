@@ -1,10 +1,21 @@
-# ToGas 제출 및 시연 안내
+# ToGas 실행 및 시연 안내
 
 2026년 11월 16일(Asia/Seoul) 검증 기준입니다. ToGas는 기록에서 검토 가능한 할 일을 제안하고, 사용자가 작업을 선택·계획·완료하도록 돕는 로컬 단일 사용자 React/FastAPI/SQLite 앱입니다.
 
-**English:** This guide covers setup, a five-minute demo, verification evidence and limitations. ToGas is a local planner that saves tasks only after approval.
+**English:** This guide covers setup, an offline five-minute demo, verification evidence and a submission checklist. ToGas is a local planner that saves tasks only after approval.
 
-## 데모 실행
+## 프로젝트 개요와 먼저 볼 자료
+
+ToGas는 감상·완료한 일·미래 의도가 섞인 기록에서 할 일을 찾아 검토하고, 무엇부터 할지 정한 뒤 가능한 시간에 배치하는 로컬 단일 사용자 앱입니다. 대상은 학업·업무·개인 책임을 함께 관리하는 개인입니다. **기록 → 추출 → 검토·승인 → 추천 → 일정 제안·확정 → 집중·완료**를 연결합니다. AI는 후보의 행동 여부·분류·긴급도를 돕고, 날짜·추천·배정은 앱의 규칙으로 처리합니다. 사용자 연구로 생산성 개선을 입증한 단계는 아닙니다.
+
+1. [제품 개요](PRODUCT_OVERVIEW.md): 문제·해결 방식·기능·현재 결과를 빠르게 확인합니다.
+2. [최종 제품 보고서](FINAL_PRODUCT_REPORT.md): 배경·목표·구조도·알고리즘·평가·제한·향후 계획을 읽습니다. 표지의 작성자·교과목·소속·제출일은 제출자가 채워야 합니다.
+3. 아래 **기본 오프라인 데모**와 **5분 시연**으로 실제 동작을 확인합니다. 키가 필요하지 않습니다.
+4. 아래 스크린샷과 [검증 현황](../STATUS.md), [실제 평가 기록](../../backend/evaluation/day4-jev-results.json), [실제 전체 흐름](../../backend/evaluation/live-workflow-results.json)을 구분해 확인합니다.
+
+**English:** Start with the product overview, then read the final report and run the offline demo. ToGas connects notes, human review and daily planning. AI assists interpretation; application rules handle planning. Complete the report's academic placeholders before submission.
+
+## 기본 오프라인 데모 실행
 
 Python 3.12, Node.js 22 이상, 터미널 2개가 필요합니다. 저장소 루트에서 실행하세요.
 
@@ -22,6 +33,8 @@ cd frontend
 npm.cmd ci
 npm.cmd run dev
 ```
+
+초기 패키지 설치에는 인터넷이 필요할 수 있습니다. 의존성 설치가 끝난 환경에서는 위 `mock` 모드로 외부 AI 호출 없이 시연할 수 있습니다. 학습된 로컬 모델을 설치한 구성은 아닙니다.
 
 http://127.0.0.1:5173을 여세요. 모의 모드는 키나 모델 호출이 필요하지 않습니다. 기존 작업·기록은 `backend/togas.db`에 남습니다. 아래 시연은 새 기록과 작업을 생성하므로, 빈 시연 공간이 필요하면 프로젝트의 별도 복사본을 사용하세요.
 
@@ -52,14 +65,16 @@ http://127.0.0.1:5173을 여세요. 모의 모드는 키나 모델 호출이 필
 
 ## 포함된 검증 근거
 
+2026-11-16의 기존 검증 결과입니다. 이번 문서 정리 중 전체 앱 검사를 새로 실행한 결과는 아닙니다. 세부 수치와 해석은 [최종 보고서](FINAL_PRODUCT_REPORT.md)에 있습니다.
+
 | 검증 항목 | 결과 |
 | --- | --- |
 | 새 Python 환경의 고정 의존성 설치와 `pip check` | 통과, 새 환경에서 백엔드 108개 테스트 통과 |
 | 깨끗한 `npm ci`와 JavaScript 단위 테스트 | 통과, 11개 테스트 및 감사 결과 취약점 0건 |
 | 프로덕션 브라우저 검사 | 25개 시나리오 통과(부모 포함 26개), 임시 SQLite와 오프라인·모의 호스팅 응답 사용 |
 | 최종 프로덕션 빌드 | 기본 API 주소를 복원한 상태로 통과 |
-| [호출 수를 제한한 실제 Jev 평가](../backend/evaluation/day4-jev-results.json) | 영어·한국어·부정 의도 합성 기록 3건, 예상 구간·개수·분류·명시적 날짜 일치 |
-| [실제 서비스 브라우저 흐름](../backend/evaluation/live-workflow-results.json) | 기록부터 수정·승인, 일정 확정, 추천, Focus, 새로 고침 후 완료 유지까지 통과 |
+| [호출 수를 제한한 실제 Jev 평가](../../backend/evaluation/day4-jev-results.json) | 영어·한국어·부정 의도 합성 기록 3건, 예상 구간·개수·분류·명시적 날짜 일치 |
+| [실제 서비스 브라우저 흐름](../../backend/evaluation/live-workflow-results.json) | 기록부터 수정·승인, 일정 확정, 추천, Focus, 새로 고침 후 완료 유지까지 통과 |
 
 최종 검토에서 소수 긴급도 표시도 수정했습니다. 모델의 1.88 같은 값을 첫 정수 선택지로 잘못 보이게 하지 않고 `Suggested: 1.88 / 3`으로 표시합니다. 호스팅 응답을 가로채는 브라우저 회귀 검사로 표시값과 승인 후 저장값을 확인했습니다. 이 수정은 오프라인으로 검사했으며 제출 준비 중 추가 실제 요청은 없었습니다.
 
@@ -71,13 +86,13 @@ http://127.0.0.1:5173을 여세요. 모의 모드는 키나 모델 호출이 필
 
 11월 16일 합성 문장과 임시 SQLite로 촬영했습니다. 최종 소수 긴급도 표시 수정 전 화면이며, 아래 이미지는 수정된 검토 필드가 아닌 일정·집중·완료 상태를 보여 줍니다.
 
-![데스크톱 확정 일정과 다음 작업 추천](screenshots/live-today-desktop.png)
+![데스크톱 확정 일정과 다음 작업 추천](../screenshots/live-today-desktop.png)
 
-![모바일 확정 일정](screenshots/live-today-mobile.png)
+![모바일 확정 일정](../screenshots/live-today-mobile.png)
 
-![한 가지 작업 집중 화면](screenshots/live-focus.png)
+![한 가지 작업 집중 화면](../screenshots/live-focus.png)
 
-![새로 고침 후에도 유지된 완료 상태](screenshots/live-completed.png)
+![새로 고침 후에도 유지된 완료 상태](../screenshots/live-completed.png)
 
 **English:** Screenshots show the real-service schedule, mobile layout, Focus and persistent completion using synthetic data.
 
@@ -85,28 +100,17 @@ http://127.0.0.1:5173을 여세요. 모의 모드는 키나 모델 호출이 필
 
 인증·클라우드 동기화·배포 보안 강화는 포함하지 않습니다. 전체 브라우저 새로 고침 후 미저장 초안은 사라집니다. 첫 15개 후보만 분석하고 더 긴 입력에는 경고합니다. 모호한 병렬 행동, 다양한 한국어 활용, 공유 기한, 모호한 날짜는 수동 검토가 필요합니다. 계획은 하루 단위이며 확정 시간을 보호합니다. 예상 시간이 없으면 임시 30분이라고 표시합니다. 일별 에너지 입력의 영구 저장은 보류했습니다.
 
-모의 개발 데이터 40건과 실제 평가 3건은 작고 합성된 데이터입니다. 일반적인 영어·한국어 정확도나 확률 임계값 보정의 근거가 될 수 없습니다. 상세 근거와 과거 기록은 [STATUS.md](STATUS.md), [DAY4_REPORT.md](DAY4_REPORT.md)를 참고하세요.
+모의 개발 데이터 40건과 실제 평가 3건은 작고 합성된 데이터입니다. 일반적인 영어·한국어 정확도나 확률 임계값 보정의 근거가 될 수 없습니다. 상세 근거와 과거 기록은 [STATUS.md](../STATUS.md), [DAY4_REPORT.md](../DAY4_REPORT.md)를 참고하세요.
 
 **English:** This local demo has no authentication or cloud sync. Review ambiguous language manually. Small synthetic datasets do not establish general model quality.
 
 ## 향후 개선 계획
 
-현재 우선순위는 **인터넷 없이 사용할 수 있는 로컬 앱**입니다. 아래 항목은 향후 계획이며 구현·검증된 기능이 아닙니다. 현재 오프라인 분석은 규칙 기반 `mock`이고, 기존 `local` 경로는 별도 OpenJevX 파일을 요구합니다. Qwen/Ollama 연동은 아직 없습니다. 클라우드 모델 추가는 후순위로 둡니다.
+현재 우선순위는 오프라인입니다. Qwen3-8B/Ollama 로컬 모델 평가, 한국어 분리·독립 다국어 평가, 초안 복구·로컬 백업·Windows 실행 간소화를 우선합니다. 이어 일정 재배정·다일 계획·선택적 달력 연동, 사용자 확인 에너지 입력, 한국어 UI·접근성·사용성 연구를 검토합니다.
 
-| 순서 | 개선 항목 | 구현 방향과 확인 기준 |
-| --- | --- | --- |
-| 1 | 로컬 AI로 Jev 대체 검토 | Qwen3-8B와 Ollama를 첫 평가 후보로 삼습니다. 모델을 미리 내려받은 뒤 네트워크를 끊고 영어·한국어 행동 여부, 분류, 긴급도와 전체 검토 흐름을 확인합니다. 대상 Windows PC의 RAM·GPU 메모리, 초기 로딩 시간과 분석 지연을 측정해 모델 크기·양자화를 결정합니다. 특정 하드웨어에서의 실행 속도나 품질은 아직 보장하지 않습니다. |
-| 2 | 한국어 추출과 독립 평가 강화 | 모델 호출 전 후보 분리도 함께 개선합니다. 복합 행동, 부정·완료, 공유 목적어·기한, 모호한 날짜와 15개 초과 입력을 포함하고, 개발에 사용하지 않은 별도 정답 세트로 평가합니다. 규칙과 로컬 모델의 정밀도·재현율, 작업 개수·분류·날짜 정확도와 지연을 각각 보고합니다. |
-| 3 | 초안 복구와 로컬 데이터 보호 | 기록·작업 초안과 재시도 ID를 새로 고침 후 복구하고, 저장 여부를 먼저 확인하여 중복 생성을 방지합니다. 로컬 백업·복원과 내보내기·가져오기를 제공하며, 복원 전 미리 보기와 명시적 확인으로 기존 데이터 덮어쓰기를 방지합니다. |
-| 4 | 오프라인 설치·실행 간소화 | 백엔드·프런트엔드를 함께 시작하는 Windows 실행 절차와 상태 점검을 제공합니다. 초기 의존성·모델 설치에는 다운로드가 필요할 수 있음을 구분하고, 준비된 환경에서 네트워크 없이 실행·분석·저장되는지 확인합니다. 모델이 없거나 메모리가 부족하면 원인과 수동 작업·규칙 기반 모드 선택지를 표시합니다. |
-| 5 | 현실적인 일정 수정 | 확정 시간이 지난 미완료 작업의 재배정·해제를 사용자가 선택하게 하고, 작업 사이 여유 시간과 기본 예상 시간을 조정할 수 있게 합니다. 이후 반복 작업·여러 날 계획을 검토하되 기존 확정 시간을 자동 변경하지 않고 변경 제안을 먼저 보여 줍니다. |
-| 6 | 한국어 사용성과 접근성 | 화면의 한국어·영어 전환, 키보드만으로 기록→검토→완료하기, 입력 레이블·포커스·오류 안내와 모바일 가독성을 개선합니다. 일별 에너지 입력은 선택 사항으로 두고, 사용자가 입력한 날짜별 값만 사용하며 추천에 반영한 이유를 설명합니다. |
+모두 향후 작업이며 현재 Qwen/Ollama 연동은 없습니다. 로컬 모델의 품질·메모리·지연을 측정하고, 생성된 신뢰도를 보정된 확률로 취급하지 않으며 분석 실패를 클라우드 호출로 자동 전환하지 않을 계획입니다. 동기·기대 효과·확인 기준은 [최종 보고서의 향후 개선](FINAL_PRODUCT_REPORT.md#16-향후-개선--future-improvements)에 정리했습니다.
 
-로컬 모델은 JSON 스키마로 응답 형식을 제한하고 백엔드에서 값·후보 ID·누락을 검증하는 어댑터로 연결할 계획입니다. LLM이 생성한 신뢰도 숫자를 Jev의 행동 확률과 같은 의미로 사용하지 않으며, 검증되지 않은 신뢰도는 제공하지 않습니다. 원문 보존·사용자 승인·명시적 날짜 처리·결정적 일정 배정은 유지하고, 로컬 분석 실패를 클라우드 호출로 자동 전환하지 않습니다.
-
-후보 선정 참고: [Qwen3-8B 공식 모델 카드](https://huggingface.co/Qwen/Qwen3-8B), [Ollama 구조화 출력 문서](https://github.com/ollama/ollama/blob/main/docs/capabilities/structured-outputs.mdx). 이 자료는 모델·실행 도구의 기능을 설명하며 ToGas에서의 성능 검증 결과는 아닙니다.
-
-**English:** Future work prioritizes offline use: evaluate Qwen3-8B through Ollama, improve Korean extraction with an independent test set, recover drafts and add local backups, simplify Windows startup, improve rescheduling, and add Korean UI/accessibility support. These are proposals, not shipped features. Initial downloads may require internet; prepared installations should run offline. Model-generated confidence will not be treated as calibrated probability, and failures will not trigger automatic cloud calls.
+**English:** Future work prioritizes local AI evaluation, stronger language evaluation, recovery and simpler offline startup. Rescheduling, localization and user studies follow. These are proposals; Qwen/Ollama is not integrated.
 
 ## 오프라인 검사 재현
 
@@ -127,6 +131,21 @@ npm.cmd run test:browser
 npm.cmd run build
 ```
 
-위 검사는 실제 모델을 호출하지 않습니다. `tests/live-workflow.mjs` 진단은 별도이며 명시적인 환경 변수 설정이 필요합니다. [STATUS.md](STATUS.md)를 참고하세요.
+위 검사는 실제 모델을 호출하지 않습니다. `tests/live-workflow.mjs` 진단은 별도이며 명시적인 환경 변수 설정이 필요합니다. [STATUS.md](../STATUS.md)를 참고하세요.
 
 **English:** These commands run offline checks. The opt-in live workflow diagnostic is separate and requires explicit environment opt-in.
+
+## 제출 전 체크리스트
+
+- [ ] 최종 보고서 표지의 작성자·교과목·대학교·제출일을 실제 정보로 채웁니다.
+- [ ] 과목별 분량·파일 형식·평가표와 PDF 등 별도 제출 형식 요구를 확인합니다.
+- [ ] README → 제품 개요 → 최종 보고서 → 제출 안내의 링크와 이미지를 확인합니다.
+- [ ] 준비된 시연 PC에서 mock 모드·포트·Chrome을 확인하고 기록부터 완료까지 시연합니다.
+- [ ] 제출자가 검사를 재실행했다면 날짜·환경·결과를 별도로 기록하고 기존 수치와 구분합니다.
+- [ ] 모의 평가와 실제 Jev 평가, 현재 기능과 향후 계획을 구분해 설명합니다.
+- [ ] `.env`, API 키, 개인 `backend/togas.db`, 개인 기록·스크린샷을 제출물에서 제외합니다.
+- [ ] 실제 서비스를 시연할 경우에만 공유 API 사용을 명시적으로 결정하고 종료 후 mock으로 복귀합니다.
+
+체크박스는 제출자가 확인할 항목이며 이번 문서 작업만으로 실행·개인 정보 입력·과목 규정 확인이 완료되었다는 뜻은 아닙니다.
+
+**English:** Fill academic placeholders, confirm course requirements, check links and screenshots, rehearse offline, distinguish recorded evidence from new runs, and exclude credentials and personal data. Live Jev is optional.

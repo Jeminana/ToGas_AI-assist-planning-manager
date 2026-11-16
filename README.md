@@ -1,12 +1,57 @@
-# ToGas — 생각을 행동으로 바꾸는 일정 관리 도우미
+# ToGas — AI-Assisted Planning Manager
+
+**생각을 행동으로 바꾸는 일정 관리 도우미 / Turn everyday thoughts into actionable plans.**
 
 혼자 사용하는 로컬 생산성 앱입니다. **생각 기록 → 제안 검토 → 다음 할 일 추천 → 한 가지 작업에 집중**하는 흐름을 지원합니다.
 
-React/Vite 프런트엔드, FastAPI 백엔드, SQLite 저장소로 구성됩니다. 할 일 문구는 원래 기록을 바탕으로 만들며, 사용자가 승인해야 실제 할 일로 저장됩니다. 시연 순서, 스크린샷, 검증 결과는 [제출 및 시연 안내](docs/SUBMISSION.md)를 참고하세요.
+React/Vite 프런트엔드, FastAPI 백엔드, SQLite 저장소로 구성됩니다. 할 일 문구는 원래 기록을 바탕으로 만들며, 사용자가 승인해야 실제 할 일로 저장됩니다. 시연 순서, 스크린샷, 검증 결과는 [실행·시연 안내](docs/submission/DEMO_GUIDE.md)를 참고하세요.
 
 **English:** ToGas is a local, single-user planner. Write a journal, review task suggestions, plan your day, and focus on one task. Suggestions become tasks only after approval.
 
 **현재 상태:** 기본 모드는 오프라인 데모(`mock`)입니다. 공식 TypeSafe Jev 연동은 초기 연결 시험과 2026년 11월 16일 기록 3건 평가를 통과했습니다. 사용 모델은 `jev-1.14.0`이며, 실제 서비스로 전체 브라우저 흐름도 검증했습니다. 데모는 규칙 기반 결과이며 Jev 예측이 아닙니다. 데모에는 키가 필요하지 않습니다. 일반적인 모델 품질은 아직 측정하지 않았습니다.
+
+## 문제와 접근 방식
+
+자유로운 기록에는 감상·완료한 일·미래 의도·기한이 섞입니다. 이를 할 일로 정리하고, 무엇부터 할지 정하고, 가능한 시간에 배치하는 전환을 ToGas가 연결합니다. 대상은 학업·업무·생활 일을 함께 관리하는 개인입니다. AI는 해석을 돕고, 날짜·추천·일정은 앱의 규칙으로 처리하며 저장·확정은 사용자가 결정합니다. 생산성 향상이나 타 제품 대비 우위는 아직 사용자 연구로 검증하지 않았습니다.
+
+**English:** ToGas connects free-form notes, task review and feasible daily planning for individuals. AI assists interpretation; rules handle planning and users approve changes. Productivity benefits have not been measured.
+
+## 제품 흐름
+
+```mermaid
+flowchart LR
+    A["기록 / Capture"] --> B["추출 / Extract"]
+    B --> C["검토·승인 / Review"]
+    C --> D["추천 / Prioritize"]
+    D --> E["계획·확정 / Plan"]
+    E --> F["집중·완료 / Focus"]
+```
+
+**English:** Capture → extract → review → prioritize → plan → focus and complete. Manual tasks and focusing without a schedule are also supported.
+
+## 구조와 기술
+
+| 구성 | 기술·역할 |
+| --- | --- |
+| 화면 | React/Vite, Journal·Review·Tasks·Planner·Focus·Search |
+| API·검증 | Python 3.12, FastAPI, Pydantic, Uvicorn |
+| 저장 | SQLite, 기록·작업·가용 시간·확정 요청 확인 |
+| 분석 | 후보 분리 규칙, 기본 mock 또는 선택적 TypeSafe Jev API |
+| 계획 | 기한·긴급도·중요도 순위, 가장 이른 빈 구간 배정 |
+
+화면 → FastAPI → SQLite를 기본으로, 분석 시에만 선택한 제공자를 사용합니다. 노력·에너지는 현재 순위를 바꾸지 않습니다. [최종 보고서](docs/submission/FINAL_PRODUCT_REPORT.md)에 구조도·API·알고리즘을 설명했습니다.
+
+**English:** React/Vite calls FastAPI, which validates inputs and coordinates SQLite, analysis and deterministic planning. Effort and energy do not currently change ranking.
+
+## 실제 앱 화면
+
+![확정 일정과 다음 작업 추천](docs/screenshots/live-today-desktop.png)
+
+![한 가지 작업 집중 화면](docs/screenshots/live-focus.png)
+
+11월 16일 실제 서비스 브라우저 흐름에서 합성 데이터·임시 SQLite로 촬영했습니다. 첫 그림의 00:00 배정은 하루 전체 계획 결과입니다. 최종 소수 긴급도 표시 수정 전 화면이며, [모바일·완료 화면과 시연 안내](docs/submission/DEMO_GUIDE.md)에 추가 자료가 있습니다.
+
+**English:** Actual application captures from the live-service workflow using synthetic data. The midnight placement used full-day planning. Screenshots predate the final fractional-urgency display fix.
 
 ## Windows에서 실행하기
 
@@ -14,7 +59,8 @@ Python 3.12와 Node.js 22 이상이 필요합니다. Node 24에서 검증했습�
 
 ```powershell
 py -3.12 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r backend/requirements.txt
+.\.venv\Scripts\python.exe -m pip install -r backend/requirements.txt -c backend/constraints.txt
+$env:TOGAS_AI_MODE = 'mock'
 .\.venv\Scripts\python.exe -m uvicorn main:app --app-dir backend --reload
 ```
 
@@ -30,9 +76,9 @@ npm.cmd run dev
 
 Python 실행 파일과 `npm.cmd`를 직접 사용하면 PowerShell의 활성화·스크립트 실행 정책 문제를 피할 수 있습니다. 시스템 보안 정책 변경은 필요하지 않습니다. Vite는 npm 재정의를 통해 [Rollup 공식 WebAssembly 대체 패키지](https://rollupjs.org/migration/#compatibility)를 사용하여 Windows Application Control에서 차단될 수 있는 네이티브 모듈을 대체합니다. 프런트엔드 버전은 잠금 파일에 기록되어 있습니다.
 
-검증 당시와 같은 Python 의존성을 설치하려면 설치 명령에 `-c backend/constraints.txt`를 추가하세요. 기본·테스트 의존성과 선택적인 로컬 모델 패키지는 분리되어 있습니다. 로컬 모델 라이브러리 없이 새 환경을 설치하고 검증했습니다.
+위 설치 명령은 `backend/constraints.txt`로 검증 당시의 Python 의존성을 지정합니다. 기본·테스트 의존성과 선택적인 로컬 모델 패키지는 분리되어 있습니다. 로컬 모델 라이브러리 없이 새 환경을 설치하고 검증했습니다. 초기 설치에는 다운로드가 필요할 수 있으며 준비된 환경의 기본 mock 흐름은 오프라인으로 동작합니다.
 
-**English:** Run the backend and frontend in separate terminals. Open port 5173. Add `-c backend/constraints.txt` to install the verified Python dependency versions.
+**English:** Run the backend and frontend in separate terminals, then open port 5173. The command uses verified dependency constraints and explicitly selects mock mode. Initial setup may need internet; the prepared mock workflow runs offline.
 
 ## 주요 기능
 
@@ -53,8 +99,6 @@ Python 실행 파일과 `npm.cmd`를 직접 사용하면 PowerShell의 활성화
 
 `TOGAS_AI_MODE`의 기본값은 `mock`입니다. 화면에 데모 모드임을 표시하고 모의 신뢰도는 숨깁니다. 제안은 사용자 검토를 거칩니다. 일반 개발·자동 테스트에서는 Jev를 호출하거나 모델을 다운로드하지 않습니다.
 
-데모 규칙은 명시적인 의도 표현과 `cook`을 포함한 제한적인 명령형을 감지합니다. 안전하게 분리할 수 있는 영어 병렬 행동·시간 도입절·감상과 의도가 섞인 문장·일부 한국어 복합 행동을 후보로 나누고 공유 목적어는 유지합니다. “내일 과제를 제출하고 친구를 만나야 해”는 후보 2개를 만듭니다. 분리 후보는 전체 원문과 공유 기한·목적어의 불확실성을 보존합니다. 알려지지 않은 단독 명령형, 임의의 한국어 활용, 구분자 없는 행동 나열은 제한 사항입니다.
-
 환경 설정 예시는 `.env.example`입니다. 백엔드는 루트 `.env`를 읽되 명시적인 셸 환경 변수는 덮어쓰지 않습니다. 키를 채팅·소스·스크린샷·Git에 포함하지 마세요. `.env`는 Git에서 제외됩니다.
 
 어댑터는 TypeSafe의 [공식 요청·응답 규약](https://docs.typesafe.ai/api/system-one)을 따릅니다. `POST https://api.typesafe.ai/v1/systemone`에 Bearer 인증과 `model`, `state`, `questions` 필드를 사용합니다. 키는 서버의 Authorization 헤더에만 넣습니다. 호스트는 고정이며 다른 게이트웨이나 리디렉션은 사용하지 않습니다.
@@ -68,30 +112,24 @@ $env:TOGAS_AI_MODE = "jev"
 
 브라우저를 새로 고치면 Journal에 **Live Jev mode**와 **Organize with Jev**가 표시됩니다. `JEV_API_KEY`는 비공개 `.env`에서 읽고 `JEV_MODEL` 기본값은 `jev-latest`입니다. 오프라인으로 돌아가려면 백엔드를 종료하고 `$env:TOGAS_AI_MODE = "mock"`으로 설정한 뒤 재시작하세요. 기록 저장·작업 CRUD·앱 시작·상태 확인·추천에는 Jev를 호출하지 않습니다.
 
-분석 1회는 최대 15개 후보와 각 후보의 판단 3종을 **HTTP 요청 1회**로 묶습니다. 성공한 동일 요청은 30분간 메모리에서 재사용합니다. 최대 32개이며 키·모델·텍스트·질문·기준 날짜로 구분합니다. 캐시 응답의 `request_count`는 0이며 사용량은 원래 요청 값입니다. 재시작하면 캐시가 초기화됩니다. 제한 시간은 30초이고 자동 재시도·리디렉션은 없습니다. 실패 시 모의 결과로 자동 전환하지 않습니다.
+분석 1회는 최대 15개 후보를 HTTP 요청 1회로 묶고 성공한 동일 요청을 제한된 메모리 캐시에서 재사용합니다. 자동 재시도·리디렉션·실패 시 모의 전환은 없습니다. Jev를 사용하면 후보 문장이 외부 API로 전송됩니다. 키나 개인 DB를 제출하지 마세요.
 
-`backend/evaluation/jev-smoke.json`은 초기 연결 시험입니다. “Meet my friend tomorrow.”에서 개인 작업을 추출했고 행동 확률 0.98, 긴급도 1.88, 기한 2026-11-13을 기록했습니다. 낮은 긴급도 신뢰도로 검토 표시가 붙었으며 작업은 저장하지 않았습니다. 연결·응답 처리 검증이며 일반 자연어 처리 품질 평가는 아닙니다.
-
-가상 환경에서 `python backend/check_jev.py`를 실행하면 합성 문장으로 **실제 요청 1회**가 발생합니다. `.env`와 앱 데이터는 바꾸지 않습니다. 연동 중 한 번 실행했으며 자동 테스트에 포함되지 않습니다.
-
-로컬 OpenJevX는 선택 사항이며 **실제 가중치로 검증하지 않았습니다**. `backend/requirements-local-ai.txt`, `TOGAS_AI_MODE=local`, 검토된 `openjevx.py`·`openjevx.w8.onnx`·`tokenizer.json`·`config.json`을 가리키는 `TOGAS_OPENJEVX_DIR`가 필요합니다. 원격 Python 코드를 자동 다운로드·실행하지 않습니다. OpenJevX는 수업용 호스팅 Jev와 다른 커뮤니티 구현입니다. `disabled` 모드에서는 복구 가능한 분석 오류를 표시하며 수동 기능은 유지합니다.
+로컬 OpenJevX 로더는 있으나 **실제 가중치 미검증**입니다. `backend/requirements-local-ai.txt`, `TOGAS_AI_MODE=local`과 검토한 파일을 가리키는 `TOGAS_OPENJEVX_DIR`가 필요합니다. Qwen/Ollama는 향후 계획입니다. 상세 규약·평가·제한은 [최종 보고서](docs/submission/FINAL_PRODUCT_REPORT.md)를 참고하세요.
 
 **English:** Mock mode is offline. Use `TOGAS_AI_MODE=jev` and a private key for real analysis. Requests are batched and cached; failures never silently switch to mock. Local OpenJevX remains unverified.
 
-## 날짜·추천·입력 검증
-
-- 날짜는 ISO `YYYY-MM-DD`, 오늘·내일·모레, 요일과 구현된 영어 표현을 인식합니다. 단순 요일은 오늘을 포함한 다음 해당 요일이고 `next Friday`는 다음 달력 주의 금요일입니다. 기준일은 브라우저가 전달합니다. “이번 주말” 같은 모호한 날짜는 비워 두어 검토하게 합니다.
-- Jump Start는 미완료 작업만 **기한 초과 → 오늘 기한 → 내일 기한 → 나머지** 순서로 고려합니다. 같은 그룹은 높은 긴급도, 높은 중요도, 빠른 기한, 오래된 ID 순입니다. 기한이 없는 작업은 기한 비교 동률에서 뒤에 둡니다. 노력 수준은 우선순위에 영향을 주지 않으며 모델 호출도 없습니다.
-- Today는 진행 중인 기한 초과·기한 없음·오늘 기한 작업, 기한이 늦더라도 오늘 시작이 확정된 작업, 오늘 완료한 작업을 보여 줍니다. Today 날짜·분석 기준일·완료일 분류는 브라우저 시간대와 무관하게 Asia/Seoul입니다. 나머지 미래 작업은 All Tasks와 추천 대상에 남습니다.
-- 제목은 앞뒤 공백 제거 후 1–250자입니다. 기록은 공백만일 수 없고 최대 10,000자이며 원래 형식을 보존합니다.
-- 분류는 `study/work/personal/health/other`, 긴급도는 0–3의 유한한 JSON 숫자, 완료 여부는 JSON 불리언입니다. 알 수 없는 필드·잘못된 날짜·미지원 null 갱신은 거절합니다. 기한·예상 시간·확정 시작 시간은 명시적인 null로 지울 수 있습니다.
-- 잘못된 입력은 읽을 수 있는 422, 빈 작업 갱신은 400, 없는 작업은 404, 분석 불가는 503을 반환합니다. 거절된 변경은 데이터를 바꾸지 않습니다.
-
-**English:** Dates use Seoul time. Recommendations follow fixed deadline, urgency and importance rules. Inputs are validated; rejected updates leave data unchanged.
-
 ## 테스트와 평가
 
-최종 검증에서 백엔드 108개, JavaScript 11개, Chrome 시나리오 25개, 의존성 검사와 프로덕션 빌드가 통과했습니다. 새 Python 환경과 깨끗한 `npm ci` 설치도 검증했습니다. 오프라인 전체 흐름은 기록부터 일정 확정·Focus 완료까지 포함합니다. 자동 호스팅 테스트는 모의 HTTP 응답을 사용합니다. [Day 4 보고서](docs/DAY4_REPORT.md)에 모의 결과 개선과 11월 16일 실제 평가를 기록했습니다. 실제 브라우저 결과는 `backend/evaluation/live-workflow-results.json`과 `docs/STATUS.md`에 있습니다.
+2026-11-16의 기존 검증 기록입니다. 이번 문서 정리에서 새로 실행한 전체 검사 결과는 아닙니다.
+
+| 평가 | 결과·범위 |
+| --- | --- |
+| 기능·환경 | 백엔드 108개, JavaScript 11개, 브라우저 25개 시나리오(부모 포함 26개), 새 설치·의존성·빌드 통과 |
+| 규칙 기반 mock | 같은 합성 개발 기록 40건에서 F1 0.7273 → 0.9647, 정확한 개수 30/40 → 39/40 |
+| 실제 Jev | 선택 기록 3건의 예상 작업 수 1·2·0, 분류 3개·명시적 날짜 2개 일치 |
+| 실제 브라우저 | 기록부터 수정·승인·일정 확정·Focus 완료·새로 고침 후 유지 통과 |
+
+모의 결과는 Jev 정확도가 아닙니다. 실제 표본도 작아 일반 품질·신뢰도 보정·생산성 효과를 주장할 수 없습니다. 원자료·토큰·지연·요청 집계는 [최종 보고서의 평가](docs/submission/FINAL_PRODUCT_REPORT.md#13-평가와-결과--evaluation-and-results)와 [검증 현황](docs/STATUS.md)에 있습니다.
 
 루트에서 실행합니다.
 
@@ -113,52 +151,19 @@ npm.cmd run test:browser
 
 앱을 켠 채 검사하려면 테스트 터미널에 `TOGAS_TEST_API_PORT=18000`, `TOGAS_TEST_UI_PORT=15173`, `VITE_API_URL=http://127.0.0.1:18000/api`를 설정하세요. 추가 CORS 출처는 임시 백엔드에만 적용합니다. 종료 후 `VITE_API_URL`을 제거하고 `npm.cmd run build`로 기본 API 주소를 복원하세요.
 
-생성 스크린샷은 Git에서 제외된 `frontend/test-results/`, 제출용 보존 파일은 `docs/screenshots/`에 있습니다. 영어·한국어 정답 예제 20개는 `backend/evaluation/examples.json`입니다. 평가기는 예측·오류·지표를 기록합니다. `mock-results.json`은 **Jev 평가가 아닙니다**. 작은 수작업 데이터로 일반 정확도를 주장할 수 없습니다. 전반적인 품질·신뢰도 보정·지연 시간 분포는 측정하지 않았습니다.
+위 검사는 실제 Jev 호출 없이 수행합니다. 생성 스크린샷은 Git에서 제외된 `frontend/test-results/`, 제출용 이미지는 `docs/screenshots/`에 있습니다. 실제 평가 진단은 일반 테스트와 분리되어 있으며 명시적인 선택이 필요합니다. [검증 현황](docs/STATUS.md)에 정확한 절차와 과거 기록을 보존했습니다.
 
-Day 4의 `backend/evaluation/day4-journals.json`에는 다중 작업 기록 40개가 있습니다. 행동 구간 일대일 대응으로 정밀도·재현율·F1, 정확한 작업 개수, 분류, 명시적 날짜, 감상·완료 문장의 오탐을 평가합니다. 합성 개발 데이터에서 모의 F1은 0.7273 → 0.9647, 정확한 개수는 30/40 → 39/40으로 개선되었습니다. **Jev 정확도나 독립 데이터에 대한 일반화 성능은 아닙니다.** 상세 결과는 `day4-baseline-mock-results.json`과 `day4-mock-results.json`입니다. 실제 응답에는 모델·사용량·전체 분석 지연 시간이 포함됩니다.
+**English:** These commands run offline tests with isolated data and mocked hosted responses. Recorded mock and live results are separate. See the final report for metrics and evidence.
 
-실제 평가는 명시적으로 실행합니다. 예: 가상 환경에서 `python backend/evaluate.py --mode jev --limit 1`. 호출 제한을 위해 `--limit`이 필수이며 첫 서비스·설정 오류 후 재시도 없이 중단합니다. 11월 16일 승인받은 기록 3건(`d4-07,d4-10,d4-12`)은 오류 없이 통과했습니다. 예상 작업 3개와 분류, 명시적 날짜 2개가 일치했고 부정 의도는 작업을 만들지 않았습니다. 입력 2,053·출력 364토큰, 전체 분석 186–513ms입니다. 결과는 `backend/evaluation/day4-jev-results.json`에 있습니다. 소수 합성 예제로 일반 정확도나 신뢰도 보정 수준을 판단할 수 없습니다.
+## 로컬 저장과 복구
 
-Day 2의 `backend/evaluation/day2-journals.json`은 영어·한국어 기록 각 1개와 정답 구간 8개(의도·감정·완료 행동)입니다. `python backend/evaluate_journals.py --mode mock`으로 오프라인 검사합니다. 준비된 실제 명령 `python backend/evaluate_journals.py --mode jev --max-requests 2`는 최대 2회 합성 요청을 보내고 오류 후 중단합니다. 이 명령은 **실행하지 않았습니다**. `day2-mock-results.json`은 행동 여부 정답 8개와 일치하지만 Jev 품질 측정은 아닙니다.
+SQLite는 Git에서 제외된 `backend/togas.db`를 사용합니다. 추가형 마이그레이션은 기존 기록을 보존합니다. 기록·작업 저장 UUID와 확정 요청 확인 정보로 동일 요청의 중복 생성과 이전 수정·완료 상태의 되돌림을 방지합니다. 같은 요청 ID의 다른 내용이나 삭제된 작업 재시도는 충돌로 처리합니다. 중요한 DB는 업그레이드 전에 백업하세요.
 
-검증 범위와 남은 제한은 [상태 기록](docs/STATUS.md)을 참고하세요.
-
-**English:** Offline checks passed: 108 backend tests, 11 JavaScript tests and 25 browser scenarios. Three selected live journals also passed, but do not establish general accuracy. Live evaluation requires an explicit call limit.
-
-## 저장 방식과 구조
-
-SQLite는 Git에서 제외된 `backend/togas.db`에 저장합니다. 시작 시 필요한 기한·완료 시각·원본 기록·기록 저장 요청 열과 작업 생성 요청 확인 테이블을 추가하며 기존 기록을 삭제하지 않습니다. 연결은 명시적으로 커밋·롤백하고 닫습니다.
-
-기록 생성은 선택적 UUID `request_id`를 받습니다. 같은 ID·내용의 재시도는 기존 항목을 반환하고 다른 내용은 409입니다. UI는 현재 세션에서 ID를 재사용하며 **New entry**는 새 요청을 시작합니다. 작업 생성도 선택적 UUID를 사용합니다. 동일 요청은 기존 작업을 반환하고 이후 수정·완료 상태를 되돌리지 않습니다. 다른 내용이나 삭제된 작업 재시도는 409입니다. 확인 정보는 서버 재시작·작업 삭제 후에도 남아 지연 재시도의 작업 재생성을 막습니다.
-
-완료 시각이 없는 이전 작업은 All Tasks에 남지만 특정 날짜 완료 수에 넣을 수 없습니다. 중요한 DB는 업그레이드 전 백업하세요.
-
-```text
-backend/
-  main.py                 HTTP 엔드포인트와 처리 흐름
-  schemas.py              공통 입력 검증
-  storage.py              SQLite 연결·마이그레이션·검색
-  ai.py                   판단 어댑터와 결과 정규화
-  segmentation.py         후보 분리와 보수적인 데모 규칙
-  jev_api.py              공식 어댑터·일괄 요청·제한된 캐시
-  settings.py             비공개 .env 로딩, 셸 설정 우선
-  scheduling.py           날짜·Today·추천 규칙
-  planning.py             우선순위·시간 배정·충돌 검사
-  tests/                  API·입력·마이그레이션·판단 테스트
-  evaluation/             정답 예제와 모드가 표시된 결과
-frontend/src/
-  main.jsx                앱 상태와 작업 흐름
-  Journal.jsx / Review.jsx / Search.jsx / TaskList.jsx / TaskFields.jsx
-  api.js / task-save.js    요청과 중복 생성 방지
-```
-
-구현 API: 상태 확인, 대시보드, 작업 CRUD, 기록 저장·목록, 검색, `/api/ai/analyze`(별칭 `/api/ai/extract`), 규칙 기반 `/api/ai/prioritize`, 가용 시간 GET/PUT, `/api/planning/propose`·`/api/planning/confirm`. Day 3에서 메타데이터·가용 시간·확정 요청 확인 테이블을 기존 데이터 삭제 없이 추가했습니다. 서울 현지 시각을 사용하며 제안만으로 시간은 저장하지 않습니다. 확정 시작은 유지하고 겹치는 수동 변경은 409로 거절합니다.
-
-**English:** SQLite stores data locally. Additive migrations preserve records, and request IDs prevent duplicate saves. Schedules are saved only after confirmation.
+**English:** SQLite stores data locally. Additive migrations preserve records and request receipts protect retries. Back up important data before upgrades.
 
 ## 향후 개선
 
-오프라인 사용을 우선합니다. Qwen3-8B/Ollama 기반 로컬 AI를 Jev 대체 후보로 평가하고, 한국어 추출·독립 정답 평가, 새로 고침 후 초안 복구·로컬 백업, Windows 실행 간소화, 일정 재배정, 한국어 화면·접근성을 순서대로 개선할 계획입니다. 모두 향후 계획이며 현재 구현된 기능이 아닙니다. 현재 오프라인 분석은 규칙 기반 `mock`입니다. 자세한 구현 방향과 확인 기준은 [제출 안내의 향후 개선 계획](docs/SUBMISSION.md#향후-개선-계획)을 참고하세요.
+오프라인 사용을 우선합니다. Qwen3-8B/Ollama 기반 로컬 AI를 Jev 대체 후보로 평가하고, 한국어 추출·독립 정답 평가, 새로 고침 후 초안 복구·로컬 백업, Windows 실행 간소화, 일정 재배정, 한국어 화면·접근성을 순서대로 개선할 계획입니다. 모두 향후 계획이며 현재 구현된 기능이 아닙니다. 현재 오프라인 분석은 규칙 기반 `mock`입니다. 자세한 구현 방향과 확인 기준은 [제출 안내의 향후 개선 계획](docs/submission/DEMO_GUIDE.md#향후-개선-계획)을 참고하세요.
 
 **English:** Offline use comes first. Planned work includes local AI evaluation, better Korean extraction, draft recovery and backups, simpler Windows startup, rescheduling, and localization/accessibility. Qwen/Ollama is not integrated yet.
 
@@ -173,3 +178,15 @@ frontend/src/
 참조된 `Jev_Tutorial(1).ipynb`는 제공된 작업 공간에 없었습니다. XP·타이머·수익화·소셜·분석 기능은 추가하지 않았습니다.
 
 **English:** This is a local demo without authentication or cloud sync. Review ambiguous language and dates manually. Only the first 15 candidates are analyzed. Save journals before analysis; unsaved drafts do not survive a full browser reload.
+
+## 문서 안내
+
+| 문서 | 읽는 목적 |
+| --- | --- |
+| [제품 개요](docs/submission/PRODUCT_OVERVIEW.md) | 짧은 문제·솔루션·현재 결과 소개 |
+| [최종 제품 보고서](docs/submission/FINAL_PRODUCT_REPORT.md) | 학술 제출용 배경·구조·알고리즘·평가·논의 |
+| [실행·시연 안내](docs/submission/DEMO_GUIDE.md) | 설치·오프라인 5분 시연·체크리스트 |
+| [검증 현황](docs/STATUS.md) | 현재 상태·검증 근거·이전 기록 |
+| [Day 3](docs/DAY3_REPORT.md) / [Day 4](docs/DAY4_REPORT.md) | 당시 구현·평가 기록 |
+
+**English:** Start with the product overview, read the final report for detail, and use the submission guide to run the demo.

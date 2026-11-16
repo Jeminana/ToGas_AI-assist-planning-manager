@@ -1,6 +1,6 @@
 # ToGas — Day 4 자연어 처리 품질 및 화면 개선 보고서
 
-2026년 11월 14일 로컬 구현·검증 완료 기록입니다. 11월 16일 승인받은 실제 Jev 요청 3회 평가와 실제 서비스 브라우저 검증도 완료했습니다. [STATUS.md](STATUS.md), [실제 흐름 결과](../backend/evaluation/live-workflow-results.json)를 참고하세요. 이후 제출 안내·스크린샷·최종 검사도 완료했으며 [SUBMISSION.md](SUBMISSION.md)에 정리했습니다. 아래 과거 기록의 미실행·대기 표현은 해당 시점 기준입니다.
+2026년 11월 14일 로컬 구현·검증 완료 기록입니다. 11월 16일 승인받은 실제 Jev 요청 3회 평가와 실제 서비스 브라우저 검증도 완료했습니다. [STATUS.md](STATUS.md), [실제 흐름 결과](../backend/evaluation/live-workflow-results.json)를 참고하세요. 이후 제출 안내·스크린샷·최종 검사도 완료했으며 [DEMO_GUIDE.md](submission/DEMO_GUIDE.md)에 정리했습니다. 아래 과거 기록의 미실행·대기 표현은 해당 시점 기준입니다.
 
 **English:** Day 4 improved extraction, review and planning. Later live evaluation, browser verification and submission preparation are complete. Historical pending statements below refer to the original checkpoint.
 
@@ -154,6 +154,6 @@ Day 3의 하루 계획·임시 시간·완료 예약·로컬 단일 사용자 �
 
 ## 9. 당시 제안한 Day 5 제출 작업
 
-승인 후 제한 평가를 실행하고 영어·한국어 오류와 실제 모델·지연·사용량을 모의 지표와 분리하도록 제안했습니다. 실제 브라우저 흐름, 제출 스크린샷·시연 안내, 제한 검토, 깨끗한 설치 확인도 제안했습니다. 소수 데이터로 일반 정확도를 주장하지 않도록 했습니다. **원래 Day 4 기록 시점에는 Day 5를 시작하지 않았습니다.** 이후 제한 평가·실제 흐름·제출 자료·최종 검사 완료는 [STATUS.md](STATUS.md), [SUBMISSION.md](SUBMISSION.md)를 참고하세요.
+승인 후 제한 평가를 실행하고 영어·한국어 오류와 실제 모델·지연·사용량을 모의 지표와 분리하도록 제안했습니다. 실제 브라우저 흐름, 제출 스크린샷·시연 안내, 제한 검토, 깨끗한 설치 확인도 제안했습니다. 소수 데이터로 일반 정확도를 주장하지 않도록 했습니다. **원래 Day 4 기록 시점에는 Day 5를 시작하지 않았습니다.** 이후 제한 평가·실제 흐름·제출 자료·최종 검사 완료는 [STATUS.md](STATUS.md), [DEMO_GUIDE.md](submission/DEMO_GUIDE.md)를 참고하세요.
 
 **English:** The original Day 5 suggestions were live evaluation, browser verification and submission preparation. Those selected tasks have since been completed; broader model validation remains future work.

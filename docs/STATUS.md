@@ -6,7 +6,7 @@
 
 ## 11월 16일 실제 서비스 브라우저 검증
 
-[SUBMISSION.md](SUBMISSION.md)에 시연 순서·보존 스크린샷·범위·제한을 정리했습니다. 최종 새 설치, 백엔드 108개(새 임시 환경 포함), JavaScript 11개, 프로덕션 브라우저 시나리오 25개, 기본 API 주소 빌드가 통과했습니다. Review의 소수 긴급도를 실제 모델 값으로 표시하도록 수정했고, 모의 호스팅 브라우저 회귀로 표시값·저장값을 확인했습니다. 제출 준비 중 추가 실제 호출은 없었습니다. Day 4 구현·실제 검증·제출 자료는 커밋 `8326e61`로 함께 반영했습니다.
+[DEMO_GUIDE.md](submission/DEMO_GUIDE.md)에 시연 순서·보존 스크린샷·범위·제한을 정리했습니다. 최종 새 설치, 백엔드 108개(새 임시 환경 포함), JavaScript 11개, 프로덕션 브라우저 시나리오 25개, 기본 API 주소 빌드가 통과했습니다. Review의 소수 긴급도를 실제 모델 값으로 표시하도록 수정했고, 모의 호스팅 브라우저 회귀로 표시값·저장값을 확인했습니다. 제출 준비 중 추가 실제 호출은 없었습니다. Day 4 구현·실제 검증·제출 자료는 커밋 `8326e61`로 함께 반영했습니다.
 
 - **통과 흐름:** 합성 기록 독립 저장 → 실제 Jev 분석 → 제목·긴급도·중요도·시간 편집 → 명시적 승인 → 원본 기록 연결 저장 → 우선순위 배정 설명 → 가용 시간 저장 → 일정 확정 → Today 추천 → Focus 완료 → 새로 고침 후 완료 유지.
 - 실제 분석·저장 작업은 [live-workflow-results.json](../backend/evaluation/live-workflow-results.json)에 있습니다. 포트 18000/15173의 임시 SQLite·임시 프로덕션 파일을 사용했습니다. 기존 DB·비공개 설정·기본 빌드는 변경하지 않았고 임시 서버·Chrome은 종료했습니다.
@@ -163,7 +163,7 @@ Day 3 전 추출 안정화를 완료했습니다. 예제·제한·제안 구조�
 2. 더 넓은 정답 데이터의 실제 평가는 향후 선택 작업이며 공유 서비스 사용을 명시적으로 결정해야 합니다. 모의 지표와 분리해 기록하세요.
 3. 실제 결과가 더 쌓이면 신뢰도 임계값과 영어·한국어 예제를 재검토하세요. 연결 시험 1건이나 소수 평가로 일반 정확도를 추론하지 않습니다.
 
-4. 한국어 추출·독립 평가, 초안 복구·로컬 백업, Windows 실행 간소화, 일정 재배정, 한국어 화면·접근성을 후속 과제로 정리했습니다. 구현 방향과 확인 기준은 [제출 안내의 향후 개선 계획](SUBMISSION.md#향후-개선-계획)을 따릅니다. 클라우드 모델 추가는 후순위입니다.
+4. 한국어 추출·독립 평가, 초안 복구·로컬 백업, Windows 실행 간소화, 일정 재배정, 한국어 화면·접근성을 후속 과제로 정리했습니다. 구현 방향과 확인 기준은 [제출 안내의 향후 개선 계획](submission/DEMO_GUIDE.md#향후-개선-계획)을 따릅니다. 클라우드 모델 추가는 후순위입니다.
 
 **English:** Submission preparation and current verification are complete. Future work prioritizes offline AI evaluation and local reliability/usability; Qwen/Ollama is not integrated. See the submission roadmap for proposed work. Broader live evaluation and confidence calibration remain optional.
 
