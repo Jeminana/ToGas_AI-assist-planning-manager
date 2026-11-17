@@ -334,6 +334,10 @@ Today, Journal, Tasks, Search를 기본 탐색으로 두고 Review와 Focus는 �
 | 5 | 사용자 확인 에너지·추천 조정 | 명시적으로 입력한 날짜별 상황만 사용하고 추천 변화 이유를 제시한다. 감정 추론·장기 학습으로 자동 확대하지 않는다. |
 | 6 | 한국어 UI·접근성·사용성 연구 | 언어 전환과 키보드·화면 읽기 도구 사용을 점검하고, 첫 작업 시작 시간·오류·수정 부담을 사용자 과제로 측정한다. |
 
+추가 개선 후보는 **작업 제목 다듬기**다. 기록에서 추출한 행동을 원래 의미를 유지하는 짧고 명확한 제목으로 제안한다. 예를 들어 `I need to do the NLP task.`는 `Work on NLP task`, `I have to finish my NLP project by Friday.`는 `Finish NLP project`로 다듬고 기한은 별도 필드에 보존한다. 원문을 함께 표시하고 사용자가 수정·승인하도록 한다. 원문에 없는 프로젝트 유형·세부 단계·완료 의도·기한은 만들지 않는다. 의미 보존, 제목 명확성, 사용자 수정 부담을 평가하며 현재 구현된 기능으로 간주하지 않는다.
+
+**English — planned task-title rewriting:** Suggest concise, action-oriented titles while preserving the journal's meaning: `I need to do the NLP task.` → `Work on NLP task`; `I have to finish my NLP project by Friday.` → `Finish NLP project`, retaining the deadline separately. Show the original text and allow editing and approval. Do not invent project types, steps, completion intent or deadlines. Evaluate meaning preservation, clarity and editing effort. This improvement is not implemented yet.
+
 참고 후보 자료: [Qwen3-8B 모델 카드](https://huggingface.co/Qwen/Qwen3-8B), [Ollama 구조화 출력](https://github.com/ollama/ollama/blob/main/docs/capabilities/structured-outputs.mdx). ToGas 성능 검증 자료는 아니다.
 
 **English:** Future work prioritizes local AI, stronger multilingual evaluation, recovery and offline startup. Later work may add rescheduling, multi-day plans, optional calendars, user-confirmed context, localization and usability studies. None of these proposals is presented as shipped functionality.

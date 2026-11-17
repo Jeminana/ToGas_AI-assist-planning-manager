@@ -1,0 +1,2457 @@
+{
+  "mode": "local",
+  "is_jev_evaluation": false,
+  "is_local_model_evaluation": true,
+  "requested_examples": 40,
+  "live_request_limit": 0,
+  "reference_date": "2026-11-14",
+  "created_at": "2026-11-17T04:25:38.579624+00:00",
+  "metrics": {
+    "examples": 40,
+    "errors": 0,
+    "true_positives": 36,
+    "false_positives": 5,
+    "false_negatives": 7,
+    "task_precision": 0.8780487804878049,
+    "task_recall": 0.8372093023255814,
+    "extraction_f1": 0.8571428571428572,
+    "exact_task_count_accuracy": 0.75,
+    "category_accuracy": 0.6428571428571429,
+    "category_examples": 42,
+    "explicit_date_accuracy": 0.7142857142857143,
+    "explicit_date_examples": 14,
+    "reflection_completed_false_positives": 0,
+    "reflection_completed_examples": 5,
+    "segmentation_missing_action_spans": 2,
+    "classification_missing_action_spans": 5
+  },
+  "results": [
+    {
+      "id": "d4-01",
+      "expected": {
+        "id": "d4-01",
+        "language": "en",
+        "text": "Meet friend. Cook for tonight.",
+        "reference_date": "2026-11-14",
+        "expected_count": 2,
+        "expected_actions": [
+          {
+            "action_span": "Meet friend.",
+            "category": "personal",
+            "due_date": null
+          },
+          {
+            "action_span": "Cook for tonight.",
+            "category": "personal",
+            "due_date": null
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "Meet friend.",
+        "Cook for tonight."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "Meet friend.",
+            "source_text": "Meet friend.",
+            "action_span": "Meet friend.",
+            "category": "other",
+            "urgency_score": 0.972,
+            "due_date": null,
+            "action_probability": 0.783,
+            "category_confidence": 0.423,
+            "urgency_confidence": 0.423,
+            "needs_review": true,
+            "review_reasons": [
+              "It is uncertain whether this sentence describes an action.",
+              "The suggested category is uncertain.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          },
+          {
+            "title": "Cook for tonight.",
+            "source_text": "Cook for tonight.",
+            "action_span": "Cook for tonight.",
+            "category": "personal",
+            "urgency_score": 0.611,
+            "due_date": null,
+            "action_probability": 0.891,
+            "category_confidence": 0.898,
+            "urgency_confidence": 0.501,
+            "needs_review": true,
+            "review_reasons": [
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 16423.36
+      },
+      "checks": [
+        {
+          "action_span": "Meet friend.",
+          "detected": true,
+          "category_matches": false,
+          "explicit_date_matches": null,
+          "review_matches": true
+        },
+        {
+          "action_span": "Cook for tonight.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 16425.541
+    },
+    {
+      "id": "d4-02",
+      "expected": {
+        "id": "d4-02",
+        "language": "en",
+        "text": "Buy milk and clean my room.",
+        "reference_date": "2026-11-14",
+        "expected_count": 2,
+        "expected_actions": [
+          {
+            "action_span": "Buy milk",
+            "category": "personal",
+            "due_date": null
+          },
+          {
+            "action_span": "clean my room.",
+            "category": "personal",
+            "due_date": null
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "Buy milk",
+        "clean my room."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "Buy milk",
+            "source_text": "Buy milk and clean my room.",
+            "action_span": "Buy milk",
+            "category": "personal",
+            "urgency_score": 1.372,
+            "due_date": null,
+            "action_probability": 0.899,
+            "category_confidence": 0.901,
+            "urgency_confidence": 0.458,
+            "needs_review": true,
+            "review_reasons": [
+              "Multiple actions were separated from one sentence; check shared objects and deadlines in the original text.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          },
+          {
+            "title": "clean my room.",
+            "source_text": "Buy milk and clean my room.",
+            "action_span": "clean my room.",
+            "category": "personal",
+            "urgency_score": 1.463,
+            "due_date": null,
+            "action_probability": 0.9,
+            "category_confidence": 0.896,
+            "urgency_confidence": 0.43,
+            "needs_review": true,
+            "review_reasons": [
+              "Multiple actions were separated from one sentence; check shared objects and deadlines in the original text.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1996.089
+      },
+      "checks": [
+        {
+          "action_span": "Buy milk",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        },
+        {
+          "action_span": "clean my room.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 1996.368
+    },
+    {
+      "id": "d4-03",
+      "expected": {
+        "id": "d4-03",
+        "language": "en",
+        "text": "Buy bread and butter.",
+        "reference_date": "2026-11-14",
+        "expected_count": 1,
+        "expected_actions": [
+          {
+            "action_span": "Buy bread and butter.",
+            "category": "personal",
+            "due_date": null
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "Buy bread and butter."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "Buy bread and butter.",
+            "source_text": "Buy bread and butter.",
+            "action_span": "Buy bread and butter.",
+            "category": "personal",
+            "urgency_score": 1.09,
+            "due_date": null,
+            "action_probability": 0.903,
+            "category_confidence": 0.916,
+            "urgency_confidence": 0.523,
+            "needs_review": true,
+            "review_reasons": [
+              "Coordinated or ambiguous wording was kept together. Check whether it contains separate tasks.",
+              "Several action words lack a clear clause boundary. Add any missing task manually.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1068.099
+      },
+      "checks": [
+        {
+          "action_span": "Buy bread and butter.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 1068.319
+    },
+    {
+      "id": "d4-04",
+      "expected": {
+        "id": "d4-04",
+        "language": "en",
+        "text": "Study Python, cook dinner, and call my mother.",
+        "reference_date": "2026-11-14",
+        "expected_count": 3,
+        "expected_actions": [
+          {
+            "action_span": "Study Python",
+            "category": "study",
+            "due_date": null
+          },
+          {
+            "action_span": "cook dinner",
+            "category": "personal",
+            "due_date": null
+          },
+          {
+            "action_span": "call my mother.",
+            "category": "personal",
+            "due_date": null
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "Study Python",
+        "cook dinner",
+        "call my mother."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "Study Python",
+            "source_text": "Study Python, cook dinner, and call my mother.",
+            "action_span": "Study Python",
+            "category": "study",
+            "urgency_score": 0.422,
+            "due_date": null,
+            "action_probability": 0.894,
+            "category_confidence": 0.874,
+            "urgency_confidence": 0.695,
+            "needs_review": true,
+            "review_reasons": [
+              "Multiple actions were separated from one sentence; check shared objects and deadlines in the original text.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          },
+          {
+            "title": "cook dinner",
+            "source_text": "Study Python, cook dinner, and call my mother.",
+            "action_span": "cook dinner",
+            "category": "personal",
+            "urgency_score": 0.463,
+            "due_date": null,
+            "action_probability": 0.897,
+            "category_confidence": 0.929,
+            "urgency_confidence": 0.619,
+            "needs_review": true,
+            "review_reasons": [
+              "Multiple actions were separated from one sentence; check shared objects and deadlines in the original text.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          },
+          {
+            "title": "call my mother.",
+            "source_text": "Study Python, cook dinner, and call my mother.",
+            "action_span": "call my mother.",
+            "category": "personal",
+            "urgency_score": 1.642,
+            "due_date": null,
+            "action_probability": 0.895,
+            "category_confidence": 0.821,
+            "urgency_confidence": 0.456,
+            "needs_review": true,
+            "review_reasons": [
+              "Multiple actions were separated from one sentence; check shared objects and deadlines in the original text.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 3061.859
+      },
+      "checks": [
+        {
+          "action_span": "Study Python",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        },
+        {
+          "action_span": "cook dinner",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        },
+        {
+          "action_span": "call my mother.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 3062.194
+    },
+    {
+      "id": "d4-05",
+      "expected": {
+        "id": "d4-05",
+        "language": "en",
+        "text": "I'm exhausted today.",
+        "reference_date": "2026-11-14",
+        "expected_count": 0,
+        "expected_actions": [],
+        "manual_review_required": false,
+        "negative_kind": "reflection"
+      },
+      "segments": [
+        "I'm exhausted today."
+      ],
+      "result": {
+        "proposals": [],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1067.334
+      },
+      "checks": [],
+      "error": null,
+      "evaluation_latency_ms": 1068.183
+    },
+    {
+      "id": "d4-06",
+      "expected": {
+        "id": "d4-06",
+        "language": "en",
+        "text": "I finished my report yesterday.",
+        "reference_date": "2026-11-14",
+        "expected_count": 0,
+        "expected_actions": [],
+        "manual_review_required": false,
+        "negative_kind": "completed"
+      },
+      "segments": [
+        "I finished my report yesterday."
+      ],
+      "result": {
+        "proposals": [],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1018.849
+      },
+      "checks": [],
+      "error": null,
+      "evaluation_latency_ms": 1019.026
+    },
+    {
+      "id": "d4-07",
+      "expected": {
+        "id": "d4-07",
+        "language": "en",
+        "text": "I'm stressed because I need to submit my assignment tomorrow.",
+        "reference_date": "2026-11-14",
+        "expected_count": 1,
+        "expected_actions": [
+          {
+            "action_span": "I need to submit my assignment tomorrow.",
+            "category": "study",
+            "due_date": "2026-11-15"
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "I need to submit my assignment tomorrow."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "I need to submit my assignment tomorrow.",
+            "source_text": "I'm stressed because I need to submit my assignment tomorrow.",
+            "action_span": "I need to submit my assignment tomorrow.",
+            "category": "study",
+            "urgency_score": 2.544,
+            "due_date": "2026-11-15",
+            "action_probability": 0.903,
+            "category_confidence": 0.933,
+            "urgency_confidence": 0.67,
+            "needs_review": true,
+            "review_reasons": [
+              "An explicit intention was separated from a reflection; check the original sentence.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1067.636
+      },
+      "checks": [
+        {
+          "action_span": "I need to submit my assignment tomorrow.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": true,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 1068.083
+    },
+    {
+      "id": "d4-08",
+      "expected": {
+        "id": "d4-08",
+        "language": "en",
+        "text": "I need to buy groceries and I should finish my project.",
+        "reference_date": "2026-11-14",
+        "expected_count": 2,
+        "expected_actions": [
+          {
+            "action_span": "I need to buy groceries",
+            "category": "personal",
+            "due_date": null
+          },
+          {
+            "action_span": "I should finish my project.",
+            "category": "work",
+            "due_date": null
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "I need to buy groceries",
+        "I should finish my project."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "I need to buy groceries",
+            "source_text": "I need to buy groceries and I should finish my project.",
+            "action_span": "I need to buy groceries",
+            "category": "personal",
+            "urgency_score": 1.825,
+            "due_date": null,
+            "action_probability": 0.906,
+            "category_confidence": 0.94,
+            "urgency_confidence": 0.687,
+            "needs_review": true,
+            "review_reasons": [
+              "Multiple actions were separated from one sentence; check shared objects and deadlines in the original text.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          },
+          {
+            "title": "I should finish my project.",
+            "source_text": "I need to buy groceries and I should finish my project.",
+            "action_span": "I should finish my project.",
+            "category": "study",
+            "urgency_score": 1.247,
+            "due_date": null,
+            "action_probability": 0.901,
+            "category_confidence": 0.876,
+            "urgency_confidence": 0.491,
+            "needs_review": true,
+            "review_reasons": [
+              "Multiple actions were separated from one sentence; check shared objects and deadlines in the original text.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 2070.698
+      },
+      "checks": [
+        {
+          "action_span": "I need to buy groceries",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        },
+        {
+          "action_span": "I should finish my project.",
+          "detected": true,
+          "category_matches": false,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 2070.935
+    },
+    {
+      "id": "d4-09",
+      "expected": {
+        "id": "d4-09",
+        "language": "en",
+        "text": "Tomorrow I have a meeting, then I need to cook dinner.",
+        "reference_date": "2026-11-14",
+        "expected_count": 2,
+        "expected_actions": [
+          {
+            "action_span": "Tomorrow I have a meeting",
+            "category": "work",
+            "due_date": "2026-11-15"
+          },
+          {
+            "action_span": "I need to cook dinner.",
+            "category": "personal",
+            "due_date": null
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "Tomorrow I have a meeting",
+        "I need to cook dinner."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "Tomorrow I have a meeting",
+            "source_text": "Tomorrow I have a meeting, then I need to cook dinner.",
+            "action_span": "Tomorrow I have a meeting",
+            "category": "work",
+            "urgency_score": 1.08,
+            "due_date": "2026-11-15",
+            "action_probability": 0.867,
+            "category_confidence": 0.373,
+            "urgency_confidence": 0.455,
+            "needs_review": true,
+            "review_reasons": [
+              "Multiple actions were separated from one sentence; check shared objects and deadlines in the original text.",
+              "The suggested category is uncertain.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          },
+          {
+            "title": "I need to cook dinner.",
+            "source_text": "Tomorrow I have a meeting, then I need to cook dinner.",
+            "action_span": "I need to cook dinner.",
+            "category": "personal",
+            "urgency_score": 1.085,
+            "due_date": null,
+            "action_probability": 0.903,
+            "category_confidence": 0.945,
+            "urgency_confidence": 0.532,
+            "needs_review": true,
+            "review_reasons": [
+              "Multiple actions were separated from one sentence; check shared objects and deadlines in the original text.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 2137.308
+      },
+      "checks": [
+        {
+          "action_span": "Tomorrow I have a meeting",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": true,
+          "review_matches": true
+        },
+        {
+          "action_span": "I need to cook dinner.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 2138.173
+    },
+    {
+      "id": "d4-10",
+      "expected": {
+        "id": "d4-10",
+        "language": "ko",
+        "text": "내일 과제를 제출하고 친구를 만나야 해.",
+        "reference_date": "2026-11-14",
+        "expected_count": 2,
+        "expected_actions": [
+          {
+            "action_span": "내일 과제를 제출",
+            "category": "study",
+            "due_date": "2026-11-15"
+          },
+          {
+            "action_span": "친구를 만나야 해.",
+            "category": "personal",
+            "due_date": null
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "내일 과제를 제출",
+        "친구를 만나야 해."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "내일 과제를 제출",
+            "source_text": "내일 과제를 제출하고 친구를 만나야 해.",
+            "action_span": "내일 과제를 제출",
+            "category": "work",
+            "urgency_score": 0.715,
+            "due_date": "2026-11-15",
+            "action_probability": 0.603,
+            "category_confidence": 0.298,
+            "urgency_confidence": 0.493,
+            "needs_review": true,
+            "review_reasons": [
+              "Multiple actions were separated from one sentence; check shared objects and deadlines in the original text.",
+              "It is uncertain whether this sentence describes an action.",
+              "The suggested category is uncertain.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 2429.322
+      },
+      "checks": [
+        {
+          "action_span": "내일 과제를 제출",
+          "detected": true,
+          "category_matches": false,
+          "explicit_date_matches": true,
+          "review_matches": true
+        },
+        {
+          "action_span": "친구를 만나야 해.",
+          "detected": false,
+          "category_matches": false,
+          "explicit_date_matches": null,
+          "review_matches": false
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 2429.778
+    },
+    {
+      "id": "d4-11",
+      "expected": {
+        "id": "d4-11",
+        "language": "ko",
+        "text": "오늘 너무 피곤하지만 내일까지 보고서를 끝내야 해.",
+        "reference_date": "2026-11-14",
+        "expected_count": 1,
+        "expected_actions": [
+          {
+            "action_span": "내일까지 보고서를 끝내야 해.",
+            "category": "work",
+            "due_date": "2026-11-15"
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "내일까지 보고서를 끝내야 해."
+      ],
+      "result": {
+        "proposals": [],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1240.075
+      },
+      "checks": [
+        {
+          "action_span": "내일까지 보고서를 끝내야 해.",
+          "detected": false,
+          "category_matches": false,
+          "explicit_date_matches": false,
+          "review_matches": false
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 1240.307
+    },
+    {
+      "id": "d4-12",
+      "expected": {
+        "id": "d4-12",
+        "language": "en",
+        "text": "I don't need to buy groceries anymore.",
+        "reference_date": "2026-11-14",
+        "expected_count": 0,
+        "expected_actions": [],
+        "manual_review_required": false,
+        "negative_kind": "negated"
+      },
+      "segments": [
+        "I don't need to buy groceries anymore."
+      ],
+      "result": {
+        "proposals": [],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1101.499
+      },
+      "checks": [],
+      "error": null,
+      "evaluation_latency_ms": 1101.689
+    },
+    {
+      "id": "d4-13",
+      "expected": {
+        "id": "d4-13",
+        "language": "en",
+        "text": "Submit homework on 2026-11-16.",
+        "reference_date": "2026-11-14",
+        "expected_count": 1,
+        "expected_actions": [
+          {
+            "action_span": "Submit homework on 2026-11-16.",
+            "category": "study",
+            "due_date": "2026-11-16"
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "Submit homework on 2026-11-16."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "Submit homework on 2026-11-16.",
+            "source_text": "Submit homework on 2026-11-16.",
+            "action_span": "Submit homework on 2026-11-16.",
+            "category": "study",
+            "urgency_score": 1.856,
+            "due_date": "2026-11-16",
+            "action_probability": 0.904,
+            "category_confidence": 0.96,
+            "urgency_confidence": 0.599,
+            "needs_review": true,
+            "review_reasons": [
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1063.399
+      },
+      "checks": [
+        {
+          "action_span": "Submit homework on 2026-11-16.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": true,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 1063.629
+    },
+    {
+      "id": "d4-14",
+      "expected": {
+        "id": "d4-14",
+        "language": "en",
+        "text": "read notes then cook dinner",
+        "reference_date": "2026-11-14",
+        "expected_count": 2,
+        "expected_actions": [
+          {
+            "action_span": "read notes",
+            "category": "study",
+            "due_date": null
+          },
+          {
+            "action_span": "cook dinner",
+            "category": "personal",
+            "due_date": null
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "read notes",
+        "cook dinner"
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "read notes",
+            "source_text": "read notes then cook dinner",
+            "action_span": "read notes",
+            "category": "other",
+            "urgency_score": 0.72,
+            "due_date": null,
+            "action_probability": 0.56,
+            "category_confidence": 0.472,
+            "urgency_confidence": 0.489,
+            "needs_review": true,
+            "review_reasons": [
+              "Multiple actions were separated from one sentence; check shared objects and deadlines in the original text.",
+              "It is uncertain whether this sentence describes an action.",
+              "The suggested category is uncertain.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          },
+          {
+            "title": "cook dinner",
+            "source_text": "read notes then cook dinner",
+            "action_span": "cook dinner",
+            "category": "personal",
+            "urgency_score": 0.463,
+            "due_date": null,
+            "action_probability": 0.897,
+            "category_confidence": 0.929,
+            "urgency_confidence": 0.619,
+            "needs_review": true,
+            "review_reasons": [
+              "Multiple actions were separated from one sentence; check shared objects and deadlines in the original text.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1906.691
+      },
+      "checks": [
+        {
+          "action_span": "read notes",
+          "detected": true,
+          "category_matches": false,
+          "explicit_date_matches": null,
+          "review_matches": true
+        },
+        {
+          "action_span": "cook dinner",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 1906.889
+    },
+    {
+      "id": "d4-15",
+      "expected": {
+        "id": "d4-15",
+        "language": "en",
+        "text": "meet friend cook dinner",
+        "reference_date": "2026-11-14",
+        "expected_count": 2,
+        "expected_actions": [
+          {
+            "action_span": "meet friend",
+            "category": "personal",
+            "due_date": null
+          },
+          {
+            "action_span": "cook dinner",
+            "category": "personal",
+            "due_date": null
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "meet friend cook dinner"
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "meet friend cook dinner",
+            "source_text": "meet friend cook dinner",
+            "action_span": "meet friend cook dinner",
+            "category": "personal",
+            "urgency_score": 0.536,
+            "due_date": null,
+            "action_probability": 0.818,
+            "category_confidence": 0.85,
+            "urgency_confidence": 0.563,
+            "needs_review": true,
+            "review_reasons": [
+              "Several action words lack a clear clause boundary. Add any missing task manually.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1005.227
+      },
+      "checks": [
+        {
+          "action_span": "meet friend",
+          "detected": false,
+          "category_matches": false,
+          "explicit_date_matches": null,
+          "review_matches": false
+        },
+        {
+          "action_span": "cook dinner",
+          "detected": false,
+          "category_matches": false,
+          "explicit_date_matches": null,
+          "review_matches": false
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 1005.417
+    },
+    {
+      "id": "d4-16",
+      "expected": {
+        "id": "d4-16",
+        "language": "en",
+        "text": "- Read notes tomorrow.\n- Pay the electricity bill today.",
+        "reference_date": "2026-11-14",
+        "expected_count": 2,
+        "expected_actions": [
+          {
+            "action_span": "Read notes tomorrow.",
+            "category": "study",
+            "due_date": "2026-11-15"
+          },
+          {
+            "action_span": "Pay the electricity bill today.",
+            "category": "personal",
+            "due_date": "2026-11-14"
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "Read notes tomorrow.",
+        "Pay the electricity bill today."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "Read notes tomorrow.",
+            "source_text": "Read notes tomorrow.",
+            "action_span": "Read notes tomorrow.",
+            "category": "study",
+            "urgency_score": 0.478,
+            "due_date": "2026-11-15",
+            "action_probability": 0.834,
+            "category_confidence": 0.651,
+            "urgency_confidence": 0.629,
+            "needs_review": true,
+            "review_reasons": [
+              "The suggested category is uncertain.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          },
+          {
+            "title": "Pay the electricity bill today.",
+            "source_text": "Pay the electricity bill today.",
+            "action_span": "Pay the electricity bill today.",
+            "category": "personal",
+            "urgency_score": 2.672,
+            "due_date": "2026-11-14",
+            "action_probability": 0.904,
+            "category_confidence": 0.727,
+            "urgency_confidence": 0.758,
+            "needs_review": true,
+            "review_reasons": [
+              "The suggested category is uncertain.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 2050.458
+      },
+      "checks": [
+        {
+          "action_span": "Read notes tomorrow.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": true,
+          "review_matches": true
+        },
+        {
+          "action_span": "Pay the electricity bill today.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": true,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 2050.734
+    },
+    {
+      "id": "d4-17",
+      "expected": {
+        "id": "d4-17",
+        "language": "en",
+        "text": "I already cleaned my room.",
+        "reference_date": "2026-11-14",
+        "expected_count": 0,
+        "expected_actions": [],
+        "manual_review_required": false,
+        "negative_kind": "completed"
+      },
+      "segments": [
+        "I already cleaned my room."
+      ],
+      "result": {
+        "proposals": [],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1019.33
+      },
+      "checks": [],
+      "error": null,
+      "evaluation_latency_ms": 1019.499
+    },
+    {
+      "id": "d4-18",
+      "expected": {
+        "id": "d4-18",
+        "language": "en",
+        "text": "I should not cook tonight.",
+        "reference_date": "2026-11-14",
+        "expected_count": 0,
+        "expected_actions": [],
+        "manual_review_required": false,
+        "negative_kind": "negated"
+      },
+      "segments": [
+        "I should not cook tonight."
+      ],
+      "result": {
+        "proposals": [],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1045.192
+      },
+      "checks": [],
+      "error": null,
+      "evaluation_latency_ms": 1045.37
+    },
+    {
+      "id": "d4-19",
+      "expected": {
+        "id": "d4-19",
+        "language": "en",
+        "text": "I want to be happier.",
+        "reference_date": "2026-11-14",
+        "expected_count": 0,
+        "expected_actions": [],
+        "manual_review_required": false,
+        "negative_kind": "vague"
+      },
+      "segments": [
+        "I want to be happier."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "I want to be happier.",
+            "source_text": "I want to be happier.",
+            "action_span": "I want to be happier.",
+            "category": "other",
+            "urgency_score": 0.401,
+            "due_date": null,
+            "action_probability": 0.889,
+            "category_confidence": 0.305,
+            "urgency_confidence": 0.709,
+            "needs_review": true,
+            "review_reasons": [
+              "The suggested category is uncertain.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1018.827
+      },
+      "checks": [],
+      "error": null,
+      "evaluation_latency_ms": 1019.007
+    },
+    {
+      "id": "d4-20",
+      "expected": {
+        "id": "d4-20",
+        "language": "en",
+        "text": "Maybe I should improve my life someday.",
+        "reference_date": "2026-11-14",
+        "expected_count": 0,
+        "expected_actions": [],
+        "manual_review_required": false,
+        "negative_kind": "vague"
+      },
+      "segments": [
+        "Maybe I should improve my life someday."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "Maybe I should improve my life someday.",
+            "source_text": "Maybe I should improve my life someday.",
+            "action_span": "Maybe I should improve my life someday.",
+            "category": "personal",
+            "urgency_score": 0.584,
+            "due_date": null,
+            "action_probability": 0.732,
+            "category_confidence": 0.501,
+            "urgency_confidence": 0.567,
+            "needs_review": true,
+            "review_reasons": [
+              "This intention is tentative. Check whether you want to make it a task.",
+              "It is uncertain whether this sentence describes an action.",
+              "The suggested category is uncertain.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1017.921
+      },
+      "checks": [],
+      "error": null,
+      "evaluation_latency_ms": 1018.101
+    },
+    {
+      "id": "d4-21",
+      "expected": {
+        "id": "d4-21",
+        "language": "en",
+        "text": "Maybe I should book a dentist appointment.",
+        "reference_date": "2026-11-14",
+        "expected_count": 1,
+        "expected_actions": [
+          {
+            "action_span": "Maybe I should book a dentist appointment.",
+            "category": "health",
+            "due_date": null
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "Maybe I should book a dentist appointment."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "Maybe I should book a dentist appointment.",
+            "source_text": "Maybe I should book a dentist appointment.",
+            "action_span": "Maybe I should book a dentist appointment.",
+            "category": "health",
+            "urgency_score": 1.477,
+            "due_date": null,
+            "action_probability": 0.801,
+            "category_confidence": 0.578,
+            "urgency_confidence": 0.412,
+            "needs_review": true,
+            "review_reasons": [
+              "This intention is tentative. Check whether you want to make it a task.",
+              "The suggested category is uncertain.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1044.907
+      },
+      "checks": [
+        {
+          "action_span": "Maybe I should book a dentist appointment.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 1045.082
+    },
+    {
+      "id": "d4-22",
+      "expected": {
+        "id": "d4-22",
+        "language": "en",
+        "text": "Buy milk. Buy milk.",
+        "reference_date": "2026-11-14",
+        "expected_count": 2,
+        "expected_actions": [
+          {
+            "action_span": "Buy milk.",
+            "category": "personal",
+            "due_date": null
+          },
+          {
+            "action_span": "Buy milk.",
+            "category": "personal",
+            "due_date": null
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "Buy milk.",
+        "Buy milk."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "Buy milk.",
+            "source_text": "Buy milk.",
+            "action_span": "Buy milk.",
+            "category": "personal",
+            "urgency_score": 1.047,
+            "due_date": null,
+            "action_probability": 0.898,
+            "category_confidence": 0.92,
+            "urgency_confidence": 0.471,
+            "needs_review": true,
+            "review_reasons": [
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          },
+          {
+            "title": "Buy milk.",
+            "source_text": "Buy milk.",
+            "action_span": "Buy milk.",
+            "category": "personal",
+            "urgency_score": 1.047,
+            "due_date": null,
+            "action_probability": 0.898,
+            "category_confidence": 0.92,
+            "urgency_confidence": 0.471,
+            "needs_review": true,
+            "review_reasons": [
+              "The suggested urgency is uncertain.",
+              "This intention appears more than once. Check whether another task is needed."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1961.713
+      },
+      "checks": [
+        {
+          "action_span": "Buy milk.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        },
+        {
+          "action_span": "Buy milk.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 1961.886
+    },
+    {
+      "id": "d4-23",
+      "expected": {
+        "id": "d4-23",
+        "language": "en",
+        "text": "Meet Dr. Kim tomorrow. Read chapter 3.5.",
+        "reference_date": "2026-11-14",
+        "expected_count": 2,
+        "expected_actions": [
+          {
+            "action_span": "Meet Dr. Kim tomorrow.",
+            "category": "personal",
+            "due_date": "2026-11-15"
+          },
+          {
+            "action_span": "Read chapter 3.5.",
+            "category": "study",
+            "due_date": null
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "Meet Dr. Kim tomorrow.",
+        "Read chapter 3.5."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "Meet Dr. Kim tomorrow.",
+            "source_text": "Meet Dr. Kim tomorrow.",
+            "action_span": "Meet Dr. Kim tomorrow.",
+            "category": "other",
+            "urgency_score": 0.874,
+            "due_date": "2026-11-15",
+            "action_probability": 0.819,
+            "category_confidence": 0.352,
+            "urgency_confidence": 0.431,
+            "needs_review": true,
+            "review_reasons": [
+              "The suggested category is uncertain.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          },
+          {
+            "title": "Read chapter 3.5.",
+            "source_text": "Read chapter 3.5.",
+            "action_span": "Read chapter 3.5.",
+            "category": "study",
+            "urgency_score": 1.018,
+            "due_date": null,
+            "action_probability": 0.505,
+            "category_confidence": 0.415,
+            "urgency_confidence": 0.439,
+            "needs_review": true,
+            "review_reasons": [
+              "It is uncertain whether this sentence describes an action.",
+              "The suggested category is uncertain.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 2055.387
+      },
+      "checks": [
+        {
+          "action_span": "Meet Dr. Kim tomorrow.",
+          "detected": true,
+          "category_matches": false,
+          "explicit_date_matches": true,
+          "review_matches": true
+        },
+        {
+          "action_span": "Read chapter 3.5.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 2055.602
+    },
+    {
+      "id": "d4-24",
+      "expected": {
+        "id": "d4-24",
+        "language": "en",
+        "text": "Buy bread, butter, and milk.",
+        "reference_date": "2026-11-14",
+        "expected_count": 1,
+        "expected_actions": [
+          {
+            "action_span": "Buy bread, butter, and milk.",
+            "category": "personal",
+            "due_date": null
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "Buy bread, butter, and milk."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "Buy bread, butter, and milk.",
+            "source_text": "Buy bread, butter, and milk.",
+            "action_span": "Buy bread, butter, and milk.",
+            "category": "personal",
+            "urgency_score": 1.277,
+            "due_date": null,
+            "action_probability": 0.903,
+            "category_confidence": 0.919,
+            "urgency_confidence": 0.472,
+            "needs_review": true,
+            "review_reasons": [
+              "Coordinated or ambiguous wording was kept together. Check whether it contains separate tasks.",
+              "Several action words lack a clear clause boundary. Add any missing task manually.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1071.021
+      },
+      "checks": [
+        {
+          "action_span": "Buy bread, butter, and milk.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 1071.206
+    },
+    {
+      "id": "d4-25",
+      "expected": {
+        "id": "d4-25",
+        "language": "en",
+        "text": "I finished my report but I need to buy groceries.",
+        "reference_date": "2026-11-14",
+        "expected_count": 1,
+        "expected_actions": [
+          {
+            "action_span": "I need to buy groceries.",
+            "category": "personal",
+            "due_date": null
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "I finished my report",
+        "I need to buy groceries."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "I finished my report",
+            "source_text": "I finished my report but I need to buy groceries.",
+            "action_span": "I finished my report",
+            "category": "study",
+            "urgency_score": 0.118,
+            "due_date": null,
+            "action_probability": 0.74,
+            "category_confidence": 0.546,
+            "urgency_confidence": 0.925,
+            "needs_review": true,
+            "review_reasons": [
+              "Multiple actions were separated from one sentence; check shared objects and deadlines in the original text.",
+              "It is uncertain whether this sentence describes an action.",
+              "The suggested category is uncertain."
+            ],
+            "title_truncated": false
+          },
+          {
+            "title": "I need to buy groceries.",
+            "source_text": "I finished my report but I need to buy groceries.",
+            "action_span": "I need to buy groceries.",
+            "category": "personal",
+            "urgency_score": 1.725,
+            "due_date": null,
+            "action_probability": 0.905,
+            "category_confidence": 0.935,
+            "urgency_confidence": 0.603,
+            "needs_review": true,
+            "review_reasons": [
+              "Multiple actions were separated from one sentence; check shared objects and deadlines in the original text.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 2035.954
+      },
+      "checks": [
+        {
+          "action_span": "I need to buy groceries.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 2036.137
+    },
+    {
+      "id": "d4-26",
+      "expected": {
+        "id": "d4-26",
+        "language": "en",
+        "text": "I feel tired but I should call my mother.",
+        "reference_date": "2026-11-14",
+        "expected_count": 1,
+        "expected_actions": [
+          {
+            "action_span": "I should call my mother.",
+            "category": "personal",
+            "due_date": null
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "I feel tired",
+        "I should call my mother."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "I should call my mother.",
+            "source_text": "I feel tired but I should call my mother.",
+            "action_span": "I should call my mother.",
+            "category": "personal",
+            "urgency_score": 1.499,
+            "due_date": null,
+            "action_probability": 0.896,
+            "category_confidence": 0.873,
+            "urgency_confidence": 0.466,
+            "needs_review": true,
+            "review_reasons": [
+              "Multiple actions were separated from one sentence; check shared objects and deadlines in the original text.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1963.576
+      },
+      "checks": [
+        {
+          "action_span": "I should call my mother.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 1963.799
+    },
+    {
+      "id": "d4-27",
+      "expected": {
+        "id": "d4-27",
+        "language": "ko",
+        "text": "오늘 기분이 좋다.",
+        "reference_date": "2026-11-14",
+        "expected_count": 0,
+        "expected_actions": [],
+        "manual_review_required": false,
+        "negative_kind": "reflection"
+      },
+      "segments": [
+        "오늘 기분이 좋다."
+      ],
+      "result": {
+        "proposals": [],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1190.798
+      },
+      "checks": [],
+      "error": null,
+      "evaluation_latency_ms": 1190.97
+    },
+    {
+      "id": "d4-28",
+      "expected": {
+        "id": "d4-28",
+        "language": "ko",
+        "text": "방 청소는 이미 끝냈다.",
+        "reference_date": "2026-11-14",
+        "expected_count": 0,
+        "expected_actions": [],
+        "manual_review_required": false,
+        "negative_kind": "completed"
+      },
+      "segments": [
+        "방 청소는 이미 끝냈다."
+      ],
+      "result": {
+        "proposals": [],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1360.5
+      },
+      "checks": [],
+      "error": null,
+      "evaluation_latency_ms": 1360.673
+    },
+    {
+      "id": "d4-29",
+      "expected": {
+        "id": "d4-29",
+        "language": "ko",
+        "text": "오늘 운동해야 한다.",
+        "reference_date": "2026-11-14",
+        "expected_count": 1,
+        "expected_actions": [
+          {
+            "action_span": "오늘 운동해야 한다.",
+            "category": "health",
+            "due_date": "2026-11-14"
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "오늘 운동해야 한다."
+      ],
+      "result": {
+        "proposals": [],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1230.006
+      },
+      "checks": [
+        {
+          "action_span": "오늘 운동해야 한다.",
+          "detected": false,
+          "category_matches": false,
+          "explicit_date_matches": false,
+          "review_matches": false
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 1230.205
+    },
+    {
+      "id": "d4-30",
+      "expected": {
+        "id": "d4-30",
+        "language": "ko",
+        "text": "내일 과제를 제출하지 않아도 된다.",
+        "reference_date": "2026-11-14",
+        "expected_count": 0,
+        "expected_actions": [],
+        "manual_review_required": false,
+        "negative_kind": "negated"
+      },
+      "segments": [
+        "내일 과제를 제출하지 않아도 된다."
+      ],
+      "result": {
+        "proposals": [],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1350.85
+      },
+      "checks": [],
+      "error": null,
+      "evaluation_latency_ms": 1351.028
+    },
+    {
+      "id": "d4-31",
+      "expected": {
+        "id": "d4-31",
+        "language": "ko",
+        "text": "내일 공부하고 방을 청소해야 해.",
+        "reference_date": "2026-11-14",
+        "expected_count": 2,
+        "expected_actions": [
+          {
+            "action_span": "내일 공부",
+            "category": "study",
+            "due_date": "2026-11-15"
+          },
+          {
+            "action_span": "방을 청소해야 해.",
+            "category": "personal",
+            "due_date": null
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "내일 공부",
+        "방을 청소해야 해."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "방을 청소해야 해.",
+            "source_text": "내일 공부하고 방을 청소해야 해.",
+            "action_span": "방을 청소해야 해.",
+            "category": "work",
+            "urgency_score": 2.185,
+            "due_date": null,
+            "action_probability": 0.792,
+            "category_confidence": 0.327,
+            "urgency_confidence": 0.506,
+            "needs_review": true,
+            "review_reasons": [
+              "Multiple actions were separated from one sentence; check shared objects and deadlines in the original text.",
+              "It is uncertain whether this sentence describes an action.",
+              "The suggested category is uncertain.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 2206.415
+      },
+      "checks": [
+        {
+          "action_span": "내일 공부",
+          "detected": false,
+          "category_matches": false,
+          "explicit_date_matches": false,
+          "review_matches": false
+        },
+        {
+          "action_span": "방을 청소해야 해.",
+          "detected": true,
+          "category_matches": false,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 2206.624
+    },
+    {
+      "id": "d4-32",
+      "expected": {
+        "id": "d4-32",
+        "language": "ko",
+        "text": "빵하고 우유를 사야 해.",
+        "reference_date": "2026-11-14",
+        "expected_count": 1,
+        "expected_actions": [
+          {
+            "action_span": "빵하고 우유를 사야 해.",
+            "category": "personal",
+            "due_date": null
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "빵하고 우유를 사야 해."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "빵하고 우유를 사야 해.",
+            "source_text": "빵하고 우유를 사야 해.",
+            "action_span": "빵하고 우유를 사야 해.",
+            "category": "other",
+            "urgency_score": 0.946,
+            "due_date": null,
+            "action_probability": 0.591,
+            "category_confidence": 0.454,
+            "urgency_confidence": 0.4,
+            "needs_review": true,
+            "review_reasons": [
+              "Coordinated or ambiguous wording was kept together. Check whether it contains separate tasks.",
+              "It is uncertain whether this sentence describes an action.",
+              "The suggested category is uncertain.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1169.913
+      },
+      "checks": [
+        {
+          "action_span": "빵하고 우유를 사야 해.",
+          "detected": true,
+          "category_matches": false,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 1170.077
+    },
+    {
+      "id": "d4-33",
+      "expected": {
+        "id": "d4-33",
+        "language": "ko",
+        "text": "친구하고 과제를 제출해야 한다.",
+        "reference_date": "2026-11-14",
+        "expected_count": 1,
+        "expected_actions": [
+          {
+            "action_span": "친구하고 과제를 제출해야 한다.",
+            "category": "study",
+            "due_date": null
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "친구하고 과제를 제출해야 한다."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "친구하고 과제를 제출해야 한다.",
+            "source_text": "친구하고 과제를 제출해야 한다.",
+            "action_span": "친구하고 과제를 제출해야 한다.",
+            "category": "work",
+            "urgency_score": 0.326,
+            "due_date": null,
+            "action_probability": 0.675,
+            "category_confidence": 0.32,
+            "urgency_confidence": 0.773,
+            "needs_review": true,
+            "review_reasons": [
+              "Coordinated or ambiguous wording was kept together. Check whether it contains separate tasks.",
+              "It is uncertain whether this sentence describes an action.",
+              "The suggested category is uncertain.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1400.536
+      },
+      "checks": [
+        {
+          "action_span": "친구하고 과제를 제출해야 한다.",
+          "detected": true,
+          "category_matches": false,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 1400.73
+    },
+    {
+      "id": "d4-34",
+      "expected": {
+        "id": "d4-34",
+        "language": "mixed",
+        "text": "I need to submit 과제 tomorrow. 오늘은 피곤하다.",
+        "reference_date": "2026-11-14",
+        "expected_count": 1,
+        "expected_actions": [
+          {
+            "action_span": "I need to submit 과제 tomorrow.",
+            "category": "study",
+            "due_date": "2026-11-15"
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "I need to submit 과제 tomorrow.",
+        "오늘은 피곤하다."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "I need to submit 과제 tomorrow.",
+            "source_text": "I need to submit 과제 tomorrow.",
+            "action_span": "I need to submit 과제 tomorrow.",
+            "category": "study",
+            "urgency_score": 2.174,
+            "due_date": "2026-11-15",
+            "action_probability": 0.903,
+            "category_confidence": 0.701,
+            "urgency_confidence": 0.433,
+            "needs_review": true,
+            "review_reasons": [
+              "The suggested category is uncertain.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 2261.529
+      },
+      "checks": [
+        {
+          "action_span": "I need to submit 과제 tomorrow.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": true,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 2261.809
+    },
+    {
+      "id": "d4-35",
+      "expected": {
+        "id": "d4-35",
+        "language": "mixed",
+        "text": "내일 과제 제출; Cook dinner.",
+        "reference_date": "2026-11-14",
+        "expected_count": 2,
+        "expected_actions": [
+          {
+            "action_span": "내일 과제 제출",
+            "category": "study",
+            "due_date": "2026-11-15"
+          },
+          {
+            "action_span": "Cook dinner.",
+            "category": "personal",
+            "due_date": null
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "내일 과제 제출",
+        "Cook dinner."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "Cook dinner.",
+            "source_text": "Cook dinner.",
+            "action_span": "Cook dinner.",
+            "category": "personal",
+            "urgency_score": 0.767,
+            "due_date": null,
+            "action_probability": 0.901,
+            "category_confidence": 0.925,
+            "urgency_confidence": 0.426,
+            "needs_review": true,
+            "review_reasons": [
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 2158.278
+      },
+      "checks": [
+        {
+          "action_span": "내일 과제 제출",
+          "detected": false,
+          "category_matches": false,
+          "explicit_date_matches": false,
+          "review_matches": false
+        },
+        {
+          "action_span": "Cook dinner.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 2158.553
+    },
+    {
+      "id": "d4-36",
+      "expected": {
+        "id": "d4-36",
+        "language": "en",
+        "text": "I will not buy milk and clean my room.",
+        "reference_date": "2026-11-14",
+        "expected_count": 0,
+        "expected_actions": [],
+        "manual_review_required": false,
+        "negative_kind": "negated"
+      },
+      "segments": [
+        "I will not buy milk and clean my room."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "I will not buy milk and clean my room.",
+            "source_text": "I will not buy milk and clean my room.",
+            "action_span": "I will not buy milk and clean my room.",
+            "category": "other",
+            "urgency_score": 0.579,
+            "due_date": null,
+            "action_probability": 0.752,
+            "category_confidence": 0.608,
+            "urgency_confidence": 0.556,
+            "needs_review": true,
+            "review_reasons": [
+              "Coordinated or ambiguous wording was kept together. Check whether it contains separate tasks.",
+              "Several action words lack a clear clause boundary. Add any missing task manually.",
+              "It is uncertain whether this sentence describes an action.",
+              "The suggested category is uncertain.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1107.294
+      },
+      "checks": [],
+      "error": null,
+      "evaluation_latency_ms": 1107.495
+    },
+    {
+      "id": "d4-37",
+      "expected": {
+        "id": "d4-37",
+        "language": "en",
+        "text": "Read notes next Monday.",
+        "reference_date": "2026-11-14",
+        "expected_count": 1,
+        "expected_actions": [
+          {
+            "action_span": "Read notes next Monday.",
+            "category": "study",
+            "due_date": "2026-11-16"
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "Read notes next Monday."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "Read notes next Monday.",
+            "source_text": "Read notes next Monday.",
+            "action_span": "Read notes next Monday.",
+            "category": "study",
+            "urgency_score": 0.428,
+            "due_date": "2026-11-16",
+            "action_probability": 0.829,
+            "category_confidence": 0.495,
+            "urgency_confidence": 0.657,
+            "needs_review": true,
+            "review_reasons": [
+              "The suggested category is uncertain.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1027.877
+      },
+      "checks": [
+        {
+          "action_span": "Read notes next Monday.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": true,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 1028.079
+    },
+    {
+      "id": "d4-38",
+      "expected": {
+        "id": "d4-38",
+        "language": "en",
+        "text": "Schedule a doctor appointment this weekend.",
+        "reference_date": "2026-11-14",
+        "expected_count": 1,
+        "expected_actions": [
+          {
+            "action_span": "Schedule a doctor appointment this weekend.",
+            "category": "health",
+            "due_date": null
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "Schedule a doctor appointment this weekend."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "Schedule a doctor appointment this weekend.",
+            "source_text": "Schedule a doctor appointment this weekend.",
+            "action_span": "Schedule a doctor appointment this weekend.",
+            "category": "health",
+            "urgency_score": 1.749,
+            "due_date": null,
+            "action_probability": 0.899,
+            "category_confidence": 0.422,
+            "urgency_confidence": 0.621,
+            "needs_review": true,
+            "review_reasons": [
+              "The suggested category is uncertain.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1297.442
+      },
+      "checks": [
+        {
+          "action_span": "Schedule a doctor appointment this weekend.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 1297.684
+    },
+    {
+      "id": "d4-39",
+      "expected": {
+        "id": "d4-39",
+        "language": "en",
+        "text": "Write \"buy milk and clean my room\" tomorrow.",
+        "reference_date": "2026-11-14",
+        "expected_count": 1,
+        "expected_actions": [
+          {
+            "action_span": "Write \"buy milk and clean my room\" tomorrow.",
+            "category": null,
+            "due_date": "2026-11-15"
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "Write \"buy milk and clean my room\" tomorrow."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "Write \"buy milk and clean my room\" tomorrow.",
+            "source_text": "Write \"buy milk and clean my room\" tomorrow.",
+            "action_span": "Write \"buy milk and clean my room\" tomorrow.",
+            "category": "personal",
+            "urgency_score": 1.314,
+            "due_date": "2026-11-15",
+            "action_probability": 0.901,
+            "category_confidence": 0.955,
+            "urgency_confidence": 0.49,
+            "needs_review": true,
+            "review_reasons": [
+              "Coordinated or ambiguous wording was kept together. Check whether it contains separate tasks.",
+              "Several action words lack a clear clause boundary. Add any missing task manually.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1470.4
+      },
+      "checks": [
+        {
+          "action_span": "Write \"buy milk and clean my room\" tomorrow.",
+          "detected": true,
+          "category_matches": null,
+          "explicit_date_matches": true,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 1470.721
+    },
+    {
+      "id": "d4-40",
+      "expected": {
+        "id": "d4-40",
+        "language": "en",
+        "text": "I intend to annotate my notes.",
+        "reference_date": "2026-11-14",
+        "expected_count": 1,
+        "expected_actions": [
+          {
+            "action_span": "I intend to annotate my notes.",
+            "category": "study",
+            "due_date": null
+          }
+        ],
+        "manual_review_required": true
+      },
+      "segments": [
+        "I intend to annotate my notes."
+      ],
+      "result": {
+        "proposals": [
+          {
+            "title": "I intend to annotate my notes.",
+            "source_text": "I intend to annotate my notes.",
+            "action_span": "I intend to annotate my notes.",
+            "category": "study",
+            "urgency_score": 0.318,
+            "due_date": null,
+            "action_probability": 0.902,
+            "category_confidence": 0.528,
+            "urgency_confidence": 0.746,
+            "needs_review": true,
+            "review_reasons": [
+              "The suggested category is uncertain.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1480.277
+      },
+      "checks": [
+        {
+          "action_span": "I intend to annotate my notes.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ],
+      "error": null,
+      "evaluation_latency_ms": 1480.523
+    }
+  ]
+}

@@ -1,8 +1,20 @@
-# ToGas 검증 현황 — 2026년 11월 16일
+# ToGas 검증 현황 — 2026년 11월 17일
 
 오프라인 P0 흐름을 구현·검증했습니다. 공식 TypeSafe Jev 어댑터는 초기 연결 시험과 11월 16일의 기록 3건 제한 평가를 통과했고, 실제 서비스를 사용하는 전체 브라우저 흐름도 같은 날 통과했습니다. 전반적인 실제 모델 품질은 측정하지 않았습니다.
 
 **English:** The offline MVP, a three-journal live evaluation and the complete real-service browser workflow passed. General model quality remains unmeasured. Historical checkpoints below retain their original scope and call counts.
+
+## 11월 17일 로컬 OpenJevX 평가
+
+- OpenJevX v0.5.2 (`muthuishere/openjevx`, revision `5399cb82a1eafad35575a6eaff5e2c5de5a8fc7e`) 실제 ONNX 가중치를 내려받아 공개 SHA-256과 일치함을 확인했습니다. 검토한 Python 로더를 기존 `local` 어댑터로 실행했습니다. 모델 파일은 Git 제외 경로 `.venv/models/openjevx/`에 있습니다.
+- Ryzen 7 7435HS CPU, Python 3.12.10, ONNX Runtime 1.31.1에서 기존 합성 개발 기록 40건을 평가했습니다. 오류 0건, 작업 추출 F1 0.8571, 정확한 작업 개수 30/40, 분류 27/42였습니다. 같은 실행 환경의 규칙 기반 mock은 F1 0.9647, 개수 39/40, 분류 37/42였습니다. 이 데이터는 mock 개발에 사용했으므로 독립 평가가 아닙니다.
+- 한국어 기록 9건에서는 예상 행동 8개 중 4개를 찾았고 분류 일치는 0/8이었습니다(미탐 포함). 혼합 언어 기록 2건은 별도 집계했습니다. 명시적 날짜는 전체 10/14였지만 날짜 해석은 앱의 규칙이며 행동 미탐도 실패에 포함됩니다.
+- 첫 기록은 모델 로딩 포함 16.426초, 이후 기록의 중앙값은 1.298초였습니다. 기록마다 후보 수가 다르며 이는 순수 모델 추론 시간이 아닌 전체 평가 시간입니다. 긴급도 정답·신뢰도 보정·브라우저 전체 흐름은 이번에 검증하지 않았습니다.
+- [전체 로컬 결과](../backend/evaluation/openjevx-local-results.json), [동일 데이터 mock 재실행](../backend/evaluation/openjevx-comparison-mock-results.json), [모델 출처·언어별 집계·실패 사례](../backend/evaluation/openjevx-comparison-summary.json)를 보존했습니다. 실제 hosted Jev는 재호출하지 않았고 개인 DB·비공개 설정·기본 분석 모드는 변경하지 않았습니다. 평가 프로세스는 종료되며 서버를 실행하지 않습니다.
+- 결론: 로컬 모델 실행 경로는 확인했지만 현재 결과로 hosted Jev나 기본 mock을 대체하지 않습니다. 아래 11월 16일 기록과 해당 날짜의 제출 문서에 있는 “로컬 미검증”은 당시 상태입니다.
+- [사용자 NLP 예문 확인](../backend/evaluation/openjevx-title-smoke-results.json): `I need to do the NLP task.`와 `I have to finish my NLP project by Friday.`는 모두 행동으로 추출했습니다. 분류는 각각 work·study였고 모두 불확실성 경고가 있었습니다. 제목은 원문 그대로이며 제목 다듬기는 여전히 향후 계획입니다.
+
+**English:** Actual OpenJevX v0.5.2 inference now runs through the existing local adapter. On 40 synthetic development journals it produced no runtime errors, F1 0.8571, exact task counts 30/40 and category matches 27/42; the rerun mock baseline achieved F1 0.9647, 39/40 and 37/42. Korean support was weak. Warm journal evaluation median was 1.298 s on CPU. These are pipeline results on development data, not general model accuracy. No hosted calls, personal database changes or app servers were involved. Keep the existing default; earlier unverified-local statements describe the November 16 checkpoint.
 
 ## 11월 16일 실제 서비스 브라우저 검증
 

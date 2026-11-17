@@ -8,6 +8,40 @@ React/Vite 프런트엔드, FastAPI 백엔드, SQLite 저장소로 구성됩니�
 
 **English:** ToGas is a local, single-user planner. Write a journal, review task suggestions, plan your day, and focus on one task. Suggestions become tasks only after approval.
 
+## 제출 자료 바로가기 / Start Here for Assessment
+
+**제출 문서는 [`docs/submission/`](docs/submission/)에 있습니다. / Submission documents are in [`docs/submission/`](docs/submission/).**
+
+| 읽는 순서 / Order | 문서 / Document | 내용 / Purpose |
+| --- | --- | --- |
+| 1 | [제품 개요 / Product Overview](docs/submission/PRODUCT_OVERVIEW.md) | 프로젝트 목적·주요 기능·현재 결과 / Quick introduction to the project and its features |
+| 2 | [최종 보고서 / Final Product Report](docs/submission/FINAL_PRODUCT_REPORT.md) | 주요 제출 보고서: 설계·NLP·알고리즘·평가·한계 / Main submission report: design, NLP, algorithms, evaluation and limitations |
+| 3 | [실행·시연 안내 / Demo Guide](docs/submission/DEMO_GUIDE.md) | 설치·실행·5분 시연·제출 체크리스트 / Setup, startup, five-minute demo and submission checklist |
+| 참고 / Reference | [최신 검증 현황 / Current Status](docs/STATUS.md) | 후속 실험과 날짜별 검증 근거 / Latest experiments and dated verification evidence |
+
+## 폴더 안내 / Folder Guide
+
+```text
+ToGas_AI-assist-planning-manager/
+├── README.md                  # Start here: introduction, submission links and startup
+├── docs/
+│   ├── submission/            # Lecturer-facing submission documents (the three files above)
+│   ├── screenshots/           # App screenshots used in the documents
+│   ├── STATUS.md              # Latest verification status and historical checkpoints
+│   └── DAY*.md                # Development reports and readiness notes
+├── backend/                   # Python API, NLP adapters, storage and planning logic
+│   ├── tests/                 # Backend automated tests
+│   └── evaluation/            # Synthetic datasets and saved evaluation results (JSON)
+├── frontend/                  # Browser application and frontend package configuration
+│   ├── src/                   # React screens, styles, helpers and JavaScript unit tests
+│   └── tests/                 # Browser workflow checks
+└── .env.example               # Configuration template; contains no private API key
+```
+
+로컬 실행 시 `.venv/`, `.venv-clean/`, `node_modules/`, `dist/`, `test-results/`, 캐시, `.env`, SQLite DB가 추가로 보일 수 있습니다. 이들은 실행 환경·생성 결과·개인 설정이며 제출 문서는 아닙니다. 위 트리는 주요 소스와 문서만 표시합니다.
+
+**English:** The tree shows the main source and documentation. Local environments, dependencies, build outputs, test artifacts, caches, private `.env` and SQLite databases are separate from the submission documents. For assessment, begin with `docs/submission/`; use `backend/` and `frontend/` to inspect the implementation.
+
 **현재 상태:** 기본 모드는 오프라인 데모(`mock`)입니다. 공식 TypeSafe Jev 연동은 초기 연결 시험과 2026년 11월 16일 기록 3건 평가를 통과했습니다. 사용 모델은 `jev-1.14.0`이며, 실제 서비스로 전체 브라우저 흐름도 검증했습니다. 데모는 규칙 기반 결과이며 Jev 예측이 아닙니다. 데모에는 키가 필요하지 않습니다. 일반적인 모델 품질은 아직 측정하지 않았습니다.
 
 ## 문제와 접근 방식

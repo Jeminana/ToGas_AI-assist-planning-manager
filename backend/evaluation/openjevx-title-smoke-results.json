@@ -1,0 +1,67 @@
+{
+  "created_at": "2026-11-17T04:27:08.901718+00:00",
+  "reference_date": "2026-11-17",
+  "purpose": "Check the user NLP examples; title rewriting is not implemented.",
+  "results": [
+    {
+      "text": "I need to do the NLP task.",
+      "result": {
+        "proposals": [
+          {
+            "title": "I need to do the NLP task.",
+            "source_text": "I need to do the NLP task.",
+            "action_span": "I need to do the NLP task.",
+            "category": "work",
+            "urgency_score": 1.849,
+            "due_date": null,
+            "action_probability": 0.908,
+            "category_confidence": 0.389,
+            "urgency_confidence": 0.504,
+            "needs_review": true,
+            "review_reasons": [
+              "The suggested category is uncertain.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 26299.412
+      }
+    },
+    {
+      "text": "I have to finish my NLP project by Friday.",
+      "result": {
+        "proposals": [
+          {
+            "title": "I have to finish my NLP project by Friday.",
+            "source_text": "I have to finish my NLP project by Friday.",
+            "action_span": "I have to finish my NLP project by Friday.",
+            "category": "study",
+            "urgency_score": 1.928,
+            "due_date": "2026-11-20",
+            "action_probability": 0.903,
+            "category_confidence": 0.59,
+            "urgency_confidence": 0.663,
+            "needs_review": true,
+            "review_reasons": [
+              "The suggested category is uncertain.",
+              "The suggested urgency is uncertain."
+            ],
+            "title_truncated": false
+          }
+        ],
+        "provider": "local",
+        "model": null,
+        "usage": null,
+        "request_count": 0,
+        "cached": false,
+        "analysis_latency_ms": 1535.872
+      }
+    }
+  ]
+}

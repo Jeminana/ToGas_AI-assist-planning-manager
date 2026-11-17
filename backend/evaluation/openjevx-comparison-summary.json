@@ -1,0 +1,525 @@
+{
+  "created_at": "2026-11-17T04:26:21.532593+00:00",
+  "model": {
+    "repository": "muthuishere/openjevx",
+    "revision": "5399cb82a1eafad35575a6eaff5e2c5de5a8fc7e",
+    "onnx_sha256": "fa1520c22876ba6a98f2b080b55c302e8f7ffbcf7630a1ff05d759bb21a18410"
+  },
+  "model_version": "0.5.2",
+  "runtime": {
+    "onnxruntime": "1.31.1",
+    "tokenizers": "0.23.3",
+    "huggingface_hub": "2.4.0"
+  },
+  "hardware": {
+    "cpu": "AMD Ryzen 7 7435HS",
+    "cores": 8,
+    "logical_processors": 16,
+    "provider": "CPUExecutionProvider",
+    "python": "3.12.10"
+  },
+  "dataset": "day4-journals.json",
+  "reference_date": "2026-11-14",
+  "local_metrics": {
+    "examples": 40,
+    "errors": 0,
+    "true_positives": 36,
+    "false_positives": 5,
+    "false_negatives": 7,
+    "task_precision": 0.8780487804878049,
+    "task_recall": 0.8372093023255814,
+    "extraction_f1": 0.8571428571428572,
+    "exact_task_count_accuracy": 0.75,
+    "category_accuracy": 0.6428571428571429,
+    "category_examples": 42,
+    "explicit_date_accuracy": 0.7142857142857143,
+    "explicit_date_examples": 14,
+    "reflection_completed_false_positives": 0,
+    "reflection_completed_examples": 5,
+    "segmentation_missing_action_spans": 2,
+    "classification_missing_action_spans": 5
+  },
+  "mock_metrics": {
+    "examples": 40,
+    "errors": 0,
+    "true_positives": 41,
+    "false_positives": 1,
+    "false_negatives": 2,
+    "task_precision": 0.9761904761904762,
+    "task_recall": 0.9534883720930233,
+    "extraction_f1": 0.9647058823529412,
+    "exact_task_count_accuracy": 0.975,
+    "category_accuracy": 0.8809523809523809,
+    "category_examples": 42,
+    "explicit_date_accuracy": 1.0,
+    "explicit_date_examples": 14,
+    "reflection_completed_false_positives": 0,
+    "reflection_completed_examples": 5,
+    "segmentation_missing_action_spans": 2,
+    "classification_missing_action_spans": 0
+  },
+  "by_language": {
+    "en": {
+      "journals": 29,
+      "exact_task_count": 24,
+      "detected_expected_actions": 30,
+      "expected_actions": 32,
+      "category_matches": 25,
+      "category_checks": 31,
+      "explicit_date_matches": 8,
+      "explicit_date_checks": 8,
+      "median_evaluation_ms": 1107.495
+    },
+    "ko": {
+      "journals": 9,
+      "exact_task_count": 5,
+      "detected_expected_actions": 4,
+      "expected_actions": 8,
+      "category_matches": 0,
+      "category_checks": 8,
+      "explicit_date_matches": 1,
+      "explicit_date_checks": 4,
+      "median_evaluation_ms": 1351.028
+    },
+    "mixed": {
+      "journals": 2,
+      "exact_task_count": 1,
+      "detected_expected_actions": 2,
+      "expected_actions": 3,
+      "category_matches": 2,
+      "category_checks": 3,
+      "explicit_date_matches": 1,
+      "explicit_date_checks": 2,
+      "median_evaluation_ms": 2210.181
+    }
+  },
+  "same_three_as_recorded_hosted_jev": {
+    "local": {
+      "journals": 3,
+      "exact_task_count": 2,
+      "detected_expected_actions": 2,
+      "expected_actions": 3,
+      "category_matches": 1,
+      "category_checks": 3,
+      "explicit_date_matches": 2,
+      "explicit_date_checks": 2,
+      "median_evaluation_ms": 1101.689
+    },
+    "hosted_recorded_metrics": {
+      "examples": 3,
+      "errors": 0,
+      "true_positives": 3,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "task_precision": 1.0,
+      "task_recall": 1.0,
+      "extraction_f1": 1.0,
+      "exact_task_count_accuracy": 1.0,
+      "category_accuracy": 1.0,
+      "category_examples": 3,
+      "explicit_date_accuracy": 1.0,
+      "explicit_date_examples": 2,
+      "reflection_completed_false_positives": 0,
+      "reflection_completed_examples": 0,
+      "segmentation_missing_action_spans": 0,
+      "classification_missing_action_spans": 0
+    },
+    "hosted_rerun": false
+  },
+  "timing": {
+    "first_journal_ms": 16425.541,
+    "warm_journal_median_ms": 1297.684,
+    "total_evaluation_seconds": 75.666
+  },
+  "limitations": [
+    "Synthetic development dataset, not an independent benchmark.",
+    "Mock rules were developed using this dataset.",
+    "Timing includes ToGas preprocessing and per-candidate model decisions; first journal also includes model loading.",
+    "Date parsing is rule-based; missed actions count as failed date checks.",
+    "No urgency ground-truth evaluation or browser workflow test.",
+    "No hosted API calls, personal database access or persistent server."
+  ],
+  "failure_examples": [
+    {
+      "id": "d4-01",
+      "text": "Meet friend. Cook for tonight.",
+      "expected_count": 2,
+      "predicted": [
+        {
+          "title": "Meet friend.",
+          "category": "other",
+          "action_probability": 0.783
+        },
+        {
+          "title": "Cook for tonight.",
+          "category": "personal",
+          "action_probability": 0.891
+        }
+      ],
+      "checks": [
+        {
+          "action_span": "Meet friend.",
+          "detected": true,
+          "category_matches": false,
+          "explicit_date_matches": null,
+          "review_matches": true
+        },
+        {
+          "action_span": "Cook for tonight.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ]
+    },
+    {
+      "id": "d4-08",
+      "text": "I need to buy groceries and I should finish my project.",
+      "expected_count": 2,
+      "predicted": [
+        {
+          "title": "I need to buy groceries",
+          "category": "personal",
+          "action_probability": 0.906
+        },
+        {
+          "title": "I should finish my project.",
+          "category": "study",
+          "action_probability": 0.901
+        }
+      ],
+      "checks": [
+        {
+          "action_span": "I need to buy groceries",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        },
+        {
+          "action_span": "I should finish my project.",
+          "detected": true,
+          "category_matches": false,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ]
+    },
+    {
+      "id": "d4-10",
+      "text": "내일 과제를 제출하고 친구를 만나야 해.",
+      "expected_count": 2,
+      "predicted": [
+        {
+          "title": "내일 과제를 제출",
+          "category": "work",
+          "action_probability": 0.603
+        }
+      ],
+      "checks": [
+        {
+          "action_span": "내일 과제를 제출",
+          "detected": true,
+          "category_matches": false,
+          "explicit_date_matches": true,
+          "review_matches": true
+        },
+        {
+          "action_span": "친구를 만나야 해.",
+          "detected": false,
+          "category_matches": false,
+          "explicit_date_matches": null,
+          "review_matches": false
+        }
+      ]
+    },
+    {
+      "id": "d4-11",
+      "text": "오늘 너무 피곤하지만 내일까지 보고서를 끝내야 해.",
+      "expected_count": 1,
+      "predicted": [],
+      "checks": [
+        {
+          "action_span": "내일까지 보고서를 끝내야 해.",
+          "detected": false,
+          "category_matches": false,
+          "explicit_date_matches": false,
+          "review_matches": false
+        }
+      ]
+    },
+    {
+      "id": "d4-14",
+      "text": "read notes then cook dinner",
+      "expected_count": 2,
+      "predicted": [
+        {
+          "title": "read notes",
+          "category": "other",
+          "action_probability": 0.56
+        },
+        {
+          "title": "cook dinner",
+          "category": "personal",
+          "action_probability": 0.897
+        }
+      ],
+      "checks": [
+        {
+          "action_span": "read notes",
+          "detected": true,
+          "category_matches": false,
+          "explicit_date_matches": null,
+          "review_matches": true
+        },
+        {
+          "action_span": "cook dinner",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ]
+    },
+    {
+      "id": "d4-15",
+      "text": "meet friend cook dinner",
+      "expected_count": 2,
+      "predicted": [
+        {
+          "title": "meet friend cook dinner",
+          "category": "personal",
+          "action_probability": 0.818
+        }
+      ],
+      "checks": [
+        {
+          "action_span": "meet friend",
+          "detected": false,
+          "category_matches": false,
+          "explicit_date_matches": null,
+          "review_matches": false
+        },
+        {
+          "action_span": "cook dinner",
+          "detected": false,
+          "category_matches": false,
+          "explicit_date_matches": null,
+          "review_matches": false
+        }
+      ]
+    },
+    {
+      "id": "d4-19",
+      "text": "I want to be happier.",
+      "expected_count": 0,
+      "predicted": [
+        {
+          "title": "I want to be happier.",
+          "category": "other",
+          "action_probability": 0.889
+        }
+      ],
+      "checks": []
+    },
+    {
+      "id": "d4-20",
+      "text": "Maybe I should improve my life someday.",
+      "expected_count": 0,
+      "predicted": [
+        {
+          "title": "Maybe I should improve my life someday.",
+          "category": "personal",
+          "action_probability": 0.732
+        }
+      ],
+      "checks": []
+    },
+    {
+      "id": "d4-23",
+      "text": "Meet Dr. Kim tomorrow. Read chapter 3.5.",
+      "expected_count": 2,
+      "predicted": [
+        {
+          "title": "Meet Dr. Kim tomorrow.",
+          "category": "other",
+          "action_probability": 0.819
+        },
+        {
+          "title": "Read chapter 3.5.",
+          "category": "study",
+          "action_probability": 0.505
+        }
+      ],
+      "checks": [
+        {
+          "action_span": "Meet Dr. Kim tomorrow.",
+          "detected": true,
+          "category_matches": false,
+          "explicit_date_matches": true,
+          "review_matches": true
+        },
+        {
+          "action_span": "Read chapter 3.5.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ]
+    },
+    {
+      "id": "d4-25",
+      "text": "I finished my report but I need to buy groceries.",
+      "expected_count": 1,
+      "predicted": [
+        {
+          "title": "I finished my report",
+          "category": "study",
+          "action_probability": 0.74
+        },
+        {
+          "title": "I need to buy groceries.",
+          "category": "personal",
+          "action_probability": 0.905
+        }
+      ],
+      "checks": [
+        {
+          "action_span": "I need to buy groceries.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ]
+    },
+    {
+      "id": "d4-29",
+      "text": "오늘 운동해야 한다.",
+      "expected_count": 1,
+      "predicted": [],
+      "checks": [
+        {
+          "action_span": "오늘 운동해야 한다.",
+          "detected": false,
+          "category_matches": false,
+          "explicit_date_matches": false,
+          "review_matches": false
+        }
+      ]
+    },
+    {
+      "id": "d4-31",
+      "text": "내일 공부하고 방을 청소해야 해.",
+      "expected_count": 2,
+      "predicted": [
+        {
+          "title": "방을 청소해야 해.",
+          "category": "work",
+          "action_probability": 0.792
+        }
+      ],
+      "checks": [
+        {
+          "action_span": "내일 공부",
+          "detected": false,
+          "category_matches": false,
+          "explicit_date_matches": false,
+          "review_matches": false
+        },
+        {
+          "action_span": "방을 청소해야 해.",
+          "detected": true,
+          "category_matches": false,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ]
+    },
+    {
+      "id": "d4-32",
+      "text": "빵하고 우유를 사야 해.",
+      "expected_count": 1,
+      "predicted": [
+        {
+          "title": "빵하고 우유를 사야 해.",
+          "category": "other",
+          "action_probability": 0.591
+        }
+      ],
+      "checks": [
+        {
+          "action_span": "빵하고 우유를 사야 해.",
+          "detected": true,
+          "category_matches": false,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ]
+    },
+    {
+      "id": "d4-33",
+      "text": "친구하고 과제를 제출해야 한다.",
+      "expected_count": 1,
+      "predicted": [
+        {
+          "title": "친구하고 과제를 제출해야 한다.",
+          "category": "work",
+          "action_probability": 0.675
+        }
+      ],
+      "checks": [
+        {
+          "action_span": "친구하고 과제를 제출해야 한다.",
+          "detected": true,
+          "category_matches": false,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ]
+    },
+    {
+      "id": "d4-35",
+      "text": "내일 과제 제출; Cook dinner.",
+      "expected_count": 2,
+      "predicted": [
+        {
+          "title": "Cook dinner.",
+          "category": "personal",
+          "action_probability": 0.901
+        }
+      ],
+      "checks": [
+        {
+          "action_span": "내일 과제 제출",
+          "detected": false,
+          "category_matches": false,
+          "explicit_date_matches": false,
+          "review_matches": false
+        },
+        {
+          "action_span": "Cook dinner.",
+          "detected": true,
+          "category_matches": true,
+          "explicit_date_matches": null,
+          "review_matches": true
+        }
+      ]
+    },
+    {
+      "id": "d4-36",
+      "text": "I will not buy milk and clean my room.",
+      "expected_count": 0,
+      "predicted": [
+        {
+          "title": "I will not buy milk and clean my room.",
+          "category": "other",
+          "action_probability": 0.752
+        }
+      ],
+      "checks": []
+    }
+  ]
+}

@@ -106,6 +106,10 @@ http://127.0.0.1:5173을 여세요. 모의 모드는 키나 모델 호출이 필
 
 ## 향후 개선 계획
 
+추가 개선 후보로 **작업 제목 다듬기**를 기록합니다. 예: `I need to do the NLP task.` → `Work on NLP task`. 원문 의미와 기한을 보존하고 원문을 함께 표시하며, 사용자가 제목을 수정·승인하도록 합니다. 원문에 없는 세부 내용은 만들지 않습니다. 아직 구현하지 않은 계획입니다.
+
+**English:** A planned improvement is concise task-title rewriting, for example `I need to do the NLP task.` → `Work on NLP task`. Preserve meaning and deadlines, show the original text, and let users edit and approve without inventing details. This is not implemented yet.
+
 현재 우선순위는 오프라인입니다. Qwen3-8B/Ollama 로컬 모델 평가, 한국어 분리·독립 다국어 평가, 초안 복구·로컬 백업·Windows 실행 간소화를 우선합니다. 이어 일정 재배정·다일 계획·선택적 달력 연동, 사용자 확인 에너지 입력, 한국어 UI·접근성·사용성 연구를 검토합니다.
 
 모두 향후 작업이며 현재 Qwen/Ollama 연동은 없습니다. 로컬 모델의 품질·메모리·지연을 측정하고, 생성된 신뢰도를 보정된 확률로 취급하지 않으며 분석 실패를 클라우드 호출로 자동 전환하지 않을 계획입니다. 동기·기대 효과·확인 기준은 [최종 보고서의 향후 개선](FINAL_PRODUCT_REPORT.md#16-향후-개선--future-improvements)에 정리했습니다.
